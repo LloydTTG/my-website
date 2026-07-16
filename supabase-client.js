@@ -7,8 +7,8 @@
    safe to expose in the browser — access is controlled by RLS.
    ================================================================ */
 
-const SUPABASE_URL = 'https://YOUR-PROJECT-REF.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY';
+const SUPABASE_URL = 'https://blmuzscdxkonhctupsvm.supabase.co/';
+const SUPABASE_ANON_KEY = 'sb_publishable_RRFckIovUQL9EbHZhpzQoA_ASseYFAH';
 
 window.sb = null;
 window.sbConfigured = false;

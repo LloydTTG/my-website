@@ -136,6 +136,11 @@ button {
     }
 }
 
+@keyframes reveal-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 .reveal {
     opacity: 0;
     translate: 0 30px;
@@ -369,6 +374,552 @@ button {
     }
 
     /* =========================================================
+       PORTAL BUTTON — a live, tiny view of the globe scene that
+       grows to fill the screen on click. Same canvas throughout,
+       so the zoom never cuts to a different visual.
+       ========================================================= */
+
+    .portal-btn {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: clamp(200px, 24vw, 280px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        overflow: hidden;
+        isolation: isolate;
+        box-shadow: 0 0 0 1px hsl(265 85% 68% / 0.25), 0 20px 70px -20px hsl(265 85% 68% / 0.6);
+        transition: transform 0.2s, box-shadow 0.2s;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 0 1px var(--c-purple), 0 24px 80px -18px hsl(265 85% 68% / 0.75);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--c-purple);
+            outline-offset: 6px;
+        }
+    }
+
+    .portal-btn__canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .portal-btn__label {
+        position: relative;
+        z-index: 1;
+        max-width: 70%;
+        font-family: var(--font-display);
+        font-size: var(--fs-18);
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        text-align: center;
+        color: var(--c-purple-deep);
+        text-shadow: 0 1px 14px hsl(0 0% 100% / 0.85);
+        pointer-events: none;
+    }
+
+    body.is-world .portal-btn {
+        box-shadow: none;
+    }
+
+    /* =========================================================
+       WORLD CHROME — revealed in place once the button has grown
+       to fill the screen (index.html never navigates away).
+       ========================================================= */
+
+    .world-chrome {
+        position: fixed;
+        inset: 0;
+        z-index: 600;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Opacity is driven per-frame from portal-button.js, in lockstep with
+       the clip-path grow/shrink and camera dolly — same progress, same
+       timing, so the text crossfade reads as part of one zoom rather than
+       a separate effect bolted on at the end. */
+
+    /* =========================================================
+       GLOBE MARKER — a point pinned to the globe's surface. Its
+       [transform] is set per-frame from JS (globe-scene.js's
+       followMarker), so this stays purely presentational.
+       ========================================================= */
+
+    .globe-marker {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 3;
+        pointer-events: none;
+        will-change: transform;
+        transition: opacity 0.25s ease;
+    }
+
+    .globe-marker.is-facing-away {
+        opacity: 0;
+    }
+
+    .globe-marker.is-facing-away .globe-marker__dot {
+        pointer-events: none;
+    }
+
+    .globe-marker__dot {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        translate: -50% -50%;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: none;
+        padding: 0;
+        background: var(--c-white);
+        box-shadow: 0 0 0 4px hsl(265 85% 68% / 0.25), 0 0 16px 2px hsl(265 85% 68% / 0.7);
+        cursor: pointer;
+        pointer-events: auto;
+
+        &:focus-visible {
+            outline: 2px solid var(--c-purple);
+            outline-offset: 4px;
+        }
+    }
+
+    .globe-marker__pulse {
+        position: absolute;
+        inset: -8px;
+        border-radius: 50%;
+        border: 2px solid var(--c-purple);
+        animation: marker-pulse 2.2s ease-out infinite;
+        pointer-events: none;
+    }
+
+    @keyframes marker-pulse {
+        0% { scale: 0.6; opacity: 0.9; }
+        100% { scale: 2.2; opacity: 0; }
+    }
+
+    .globe-marker__label {
+        position: absolute;
+        top: 0;
+        left: 22px;
+        translate: 0 -50%;
+        white-space: nowrap;
+        font-family: var(--font-display);
+        font-size: var(--fs-14);
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: var(--c-white);
+        text-shadow: 0 1px 8px hsl(228 20% 4% / 0.9), 0 0 20px hsl(265 85% 68% / 0.4);
+        pointer-events: auto;
+        cursor: pointer;
+    }
+
+    /* Admin-only: shown once signed in, lets an admin grab a dot to drag it
+       to a new spot on the globe (marker-layer.js does the raycasting). */
+    .globe-marker.is-admin .globe-marker__dot {
+        cursor: grab;
+        box-shadow: 0 0 0 4px hsl(10 96% 56% / 0.3), 0 0 16px 2px hsl(10 96% 56% / 0.8);
+    }
+
+    .globe-marker__delete {
+        position: absolute;
+        top: -14px;
+        left: 22px;
+        translate: 0 -100%;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        border-radius: 50%;
+        border: none;
+        background: hsl(5, 68%, 52%);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        pointer-events: auto;
+        transition: opacity 0.12s;
+
+        &:hover { opacity: 0.82; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .globe-marker__pulse {
+            animation: none;
+        }
+    }
+
+    /* =========================================================
+       LOCATION CHROME — revealed once the camera has flown down to
+       stand at the marker's spot on the globe's surface. On
+       index.html this has no backdrop of its own (.location-chrome__bg
+       is only used standalone, on outpost.html) — the globe's surface
+       and the starfield above the horizon stay visible behind the text.
+       ========================================================= */
+
+    .location-chrome {
+        position: fixed;
+        inset: 0;
+        z-index: 700;
+        opacity: 0;
+        pointer-events: none;
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
+    }
+
+    .location-edit-btn {
+        margin-inline-start: auto;
+    }
+
+    .location-chrome__bg {
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(ellipse 60% 50% at 80% 15%, hsl(266 85% 60% / 0.22) 0%, transparent 65%),
+            radial-gradient(ellipse 55% 50% at 15% 85%, hsl(266 70% 45% / 0.16) 0%, transparent 65%),
+            var(--c-black);
+    }
+
+    /* Standalone equivalent for outpost.html (a direct visit/reload, no
+       in-page animation involved — just resting content in normal flow). */
+    .outpost-page {
+        position: relative;
+        min-height: 100vh;
+    }
+
+    .outpost-hero {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        /* Top-aligned (not vertically centered) so the title sits high on
+           screen right away instead of drifting depending on how much body
+           content there is — the page scrolls for anything past the fold. */
+        padding: 56px clamp(24px, 8vw, 96px) 0;
+        /* .location-chrome (the in-page version on index.html/world.html)
+           sits at pointer-events: none so the invisible overlay doesn't
+           block the globe underneath — .world-nav opts its buttons back
+           in, but this text block needs the same so it can be clicked
+           into once an admin makes it contenteditable. */
+        pointer-events: auto;
+    }
+
+    .outpost-hero__eyebrow {
+        font-size: var(--fs-13);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.26em;
+        color: var(--c-purple);
+        margin-block-end: 18px;
+        text-shadow: 0 1px 10px hsl(228 20% 4% / 0.85);
+    }
+
+    .outpost-hero__title {
+        font-size: clamp(2.2rem, 5vw, 4rem);
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        color: var(--c-white);
+        margin-block-end: 24px;
+        text-shadow: 0 2px 20px hsl(228 20% 4% / 0.9);
+    }
+
+    /* Free-form canvas (the location's "description") — instead of one
+       flowing text column, an admin drags independent text/image boxes
+       anywhere on this (see canvas-editor.js). x/width are percentages of
+       the canvas so horizontal layout scales with viewport width; y is
+       plain px since vertical space is just scroll, not viewport-limited.
+       Height is computed in JS from the lowest block's bottom edge. */
+    .location-canvas {
+        position: relative;
+        width: 100%;
+        text-align: left;
+        margin-block-start: 24px;
+    }
+
+    .canvas-block {
+        position: absolute;
+    }
+
+    .location-canvas.is-editing .canvas-block {
+        outline: 1px dashed hsl(265 85% 68% / 0.4);
+        outline-offset: 8px;
+        border-radius: 6px;
+    }
+
+    .canvas-block__handle {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 4px 8px;
+        margin-block-end: 6px;
+        border-radius: 6px;
+        background: hsl(265 85% 68% / 0.25);
+        border: 1px dashed hsl(265 85% 68% / 0.6);
+        cursor: grab;
+        user-select: none;
+    }
+
+    .location-canvas.is-editing .canvas-block__handle {
+        display: flex;
+    }
+
+    .canvas-block__grip {
+        color: var(--c-white);
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+
+    .canvas-block__delete {
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: none;
+        background: hsl(5, 68%, 52%);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1;
+        cursor: pointer;
+
+        &:hover { opacity: 0.82; }
+    }
+
+    .canvas-block__resize {
+        display: none;
+        position: absolute;
+        right: -7px;
+        bottom: -7px;
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        background: var(--c-purple);
+        border: 2px solid var(--c-white);
+        box-shadow: 0 2px 8px hsl(228 20% 4% / 0.5);
+        cursor: nwse-resize;
+    }
+
+    .location-canvas.is-editing .canvas-block__resize {
+        display: block;
+    }
+
+    .canvas-block--image img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+    }
+
+    .canvas-block__text {
+        color: var(--c-gray);
+        font-size: clamp(var(--fs-16), 1.3vw, var(--fs-18));
+        line-height: 1.7;
+        text-shadow: 0 1px 12px hsl(228 20% 4% / 0.85);
+
+        &[contenteditable="true"] { cursor: text; }
+
+        p, ul, ol {
+            margin: 0 0 16px;
+
+            &:last-child { margin-bottom: 0; }
+        }
+
+        h2 {
+            color: var(--c-white);
+            font-size: 1.35em;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            margin: 20px 0 12px;
+
+            &:first-child { margin-top: 0; }
+        }
+
+        ul, ol {
+            padding-inline-start: 1.3em;
+        }
+
+        a {
+            color: var(--c-purple);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+    }
+
+    /* A little something for anyone who scrolls all the way down. */
+    .outpost-egg {
+        margin-block-start: 40vh;
+        padding: 40px 24px 140px;
+        text-align: center;
+        color: var(--c-gray-dim);
+        font-size: var(--fs-14);
+        line-height: 1.6;
+    }
+
+    .outpost-egg__icon {
+        display: block;
+        font-size: 2rem;
+        margin-block-end: 12px;
+    }
+
+    /* Rich-text toolbar shown alongside the location editor (bold/italic/
+       headings/lists/image) — same visual language as the admin bar. */
+    .editor-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        padding: 0 24px 16px;
+        position: relative;
+        z-index: 2;
+        /* .location-chrome sits at pointer-events: none so the invisible
+           overlay doesn't block the globe underneath — this is a direct
+           child of it (a sibling of .world-nav, not nested inside it), so
+           it needs the same opt-back-in or its buttons silently don't
+           receive clicks at all. */
+        pointer-events: auto;
+    }
+
+    .editor-toolbar__btn {
+        font-family: inherit;
+        font-size: var(--fs-13);
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 5px;
+        border: 1px solid hsl(0 0% 100% / 0.22);
+        background: hsl(0 0% 100% / 0.06);
+        backdrop-filter: blur(8px);
+        color: var(--c-white);
+        cursor: pointer;
+        transition: border-color 0.15s, background 0.15s;
+
+        &:hover { border-color: var(--c-purple); background: hsl(0 0% 100% / 0.12); }
+    }
+
+    /* =========================================================
+       WORLD PAGE
+       ========================================================= */
+
+    .world-page {
+        position: relative;
+        min-height: 100vh;
+        overflow: hidden;
+        background: var(--c-black);
+    }
+
+    .world-canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .world-nav {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        padding: 24px clamp(20px, 4vw, 48px);
+        pointer-events: auto;
+    }
+
+    .world-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--font-display);
+        font-size: var(--fs-14);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--c-white);
+        padding: 10px 20px;
+        border-radius: 999px;
+        border: 1px solid hsl(0 0% 100% / 0.22);
+        background: hsl(0 0% 100% / 0.06);
+        backdrop-filter: blur(8px);
+        transition: border-color 0.2s, background 0.2s, transform 0.2s;
+
+        &:hover {
+            border-color: var(--c-purple);
+            background: hsl(0 0% 100% / 0.12);
+            transform: translateX(-2px);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--c-purple);
+            outline-offset: 4px;
+        }
+    }
+
+    .world-hero {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: calc(100vh - 84px);
+        padding: 24px;
+        pointer-events: none;
+    }
+
+    .world-hero__eyebrow {
+        font-size: var(--fs-13);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.26em;
+        color: var(--c-purple);
+        margin-block-end: 18px;
+    }
+
+    .world-hero__title {
+        font-size: clamp(2.4rem, 6vw, 5rem);
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        color: var(--c-white);
+        margin-block-end: 16px;
+    }
+
+    .world-hero__desc {
+        max-width: 52ch;
+        color: var(--c-gray);
+        font-size: clamp(var(--fs-16), 1.4vw, var(--fs-18));
+    }
+
+    .world-hint {
+        position: absolute;
+        bottom: 28px;
+        left: 50%;
+        translate: -50% 0;
+        z-index: 2;
+        font-size: var(--fs-13);
+        color: var(--c-gray-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        opacity: 0.8;
+    }
+
+    /* =========================================================
        SECTION HEADERS
        ========================================================= */
 
@@ -460,11 +1011,10 @@ button {
     }
 
     .hero__title {
-        font-size: clamp(3rem, 8.5vw, 6.8rem);
+        font-size: clamp(3rem, 3.0vw, 6.8rem);
         font-weight: 900;
         letter-spacing: -0.03em;
         line-height: 0.98;
-        text-transform: uppercase;
         margin-block-end: 28px;
         overflow-wrap: break-word;
 
@@ -506,6 +1056,28 @@ button {
         gap: 40px;
         flex-wrap: wrap;
         animation-delay: 0.4s;
+
+        /* Plain fade instead of the generic reveal-pop: this block holds the
+           live portal-globe canvas, and a lingering non-"none" translate,
+           scale, or filter value (even at rest — "scale:1" or "blur(0)")
+           makes this element a containing block for position:fixed
+           descendants, which would break the canvas's fixed-position zoom
+           math. Keep all of those at their true initial "none" always. */
+        &.reveal {
+            translate: none;
+            scale: none;
+            filter: none;
+        }
+
+        &.reveal.is-visible {
+            animation: reveal-fade 0.7s ease both;
+        }
+    }
+
+    .hero__actions--center {
+        justify-content: center;
+        width: 100%;
+        margin-block: 12px 8px;
     }
 
     /* Stats bar */
@@ -1440,9 +2012,11 @@ button {
         &.ab-ctrl--delete { background: hsl(5, 68%, 52%); color: #fff; }
     }
 
-    /* Inline content editing */
+    /* Inline content editing — used both for the sitewide [data-content-key]
+       text and for a marker's location fields (edited via the separate
+       "Edit location text" button, not tied to a data-content-key). */
 
-    [data-content-key][contenteditable="true"] {
+    [contenteditable="true"] {
         outline: 1.5px dashed hsl(10 96% 56% / 0.5);
         outline-offset: 6px;
         border-radius: 2px;

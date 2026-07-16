@@ -1,5 +1,5 @@
 /* ================================================================
-   main.js — nav, scroll reveals, stat counters, editable content
+   main.js — nav, scroll reveals, stat counters
    ================================================================ */
 
 (function () {
@@ -85,23 +85,4 @@
         counters.forEach(animateCount);
     }
 
-    /* ---- Load editable site content from Supabase ---- */
-
-    async function loadSiteContent() {
-        if (!window.sbConfigured) return;
-
-        const { data, error } = await window.sb
-            .from('site_content')
-            .select('key, value');
-
-        if (error || !data) return;
-
-        data.forEach(({ key, value }) => {
-            const el = document.querySelector(`[data-content-key="${key}"]`);
-            if (el && value) el.innerHTML = value; // stored HTML is admin-authored
-        });
-    }
-
-    // supabase-client.js runs first (defer order), so sb is ready here.
-    loadSiteContent();
 })();

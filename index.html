@@ -13,17 +13,30 @@
 
     <link rel="stylesheet" href="styles.css">
 
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     <script src="supabase-client.js" defer></script>
+    <script src="site-content.js" defer></script>
     <script src="main.js" defer></script>
     <script src="projects.js" defer></script>
     <script src="testimonials.js" defer></script>
     <script src="contact.js" defer></script>
     <script src="admin.js" defer></script>
+    <script type="module" src="portal-button.js"></script>
 </head>
 
 <body>
     <a class="visually-hidden skip" href="#main">Skip to main content</a>
+
+    <div id="site-content">
 
     <header class="topnav" id="topnav">
 
@@ -33,7 +46,7 @@
 
             <a href="/" class="topnav__homelink" aria-label="Meridian Studio homepage">
                 <span class="topnav__mark" aria-hidden="true"></span>
-                <span class="topnav__wordmark">Meridian</span>
+                <span class="topnav__wordmark">Randy</span>
             </a>
 
             <nav aria-label="Primary navigation">
@@ -91,12 +104,14 @@
 
             <div class="hero__content">
                 <p class="hero__eyebrow reveal" data-content-key="hero_eyebrow">Welcome to my corner of the internet</p>
-                <h1 class="hero__title reveal" data-content-key="hero_title">I'm Randy.<br>Placeholder tagline.</h1>
-                <p class="hero__desc reveal" data-content-key="hero_desc">Placeholder text — swap this out for a short introduction: what you do, who you help, and why it matters. Two or three sentences is plenty.</p>
+                <h1 class="hero__title reveal" data-content-key="hero_title">hey there <br>what the sigma</h1>
+                <p class="hero__desc reveal" data-content-key="hero_desc">it's randy time</p>
 
-                <div class="hero__actions reveal">
-                    <a href="#contact" class="btn btn--primary">Start a project</a>
-                    <a href="#work" class="btn btn--ghost">See the work</a>
+                <div class="hero__actions hero__actions--center reveal">
+                    <a href="world.html" class="portal-btn" id="portal-btn" aria-label="Enter My World">
+                        <canvas id="portal-btn-canvas" class="portal-btn__canvas" aria-hidden="true"></canvas>
+                        <span class="portal-btn__label">Enter My World</span>
+                    </a>
                 </div>
             </div>
 
@@ -395,6 +410,52 @@
         </div>
 
     </footer>
+
+    </div>
+
+    <div class="world-chrome" id="world-chrome" hidden>
+        <nav class="world-nav" aria-label="World page navigation">
+            <button type="button" class="world-back" id="world-back-btn">
+                <span aria-hidden="true">←</span> Back
+            </button>
+        </nav>
+        <main class="world-hero">
+            <p class="world-hero__eyebrow" data-content-key="world_hero_eyebrow">You made it through</p>
+            <h1 class="world-hero__title" data-content-key="world_hero_title">Welcome to my world.</h1>
+            <p class="world-hero__desc" data-content-key="world_hero_desc">it's randy time</p>
+        </main>
+        <p class="world-hint">Drag to explore</p>
+
+        <div class="globe-markers" id="globe-markers"></div>
+    </div>
+
+    <div class="location-chrome" id="location-chrome" hidden>
+        <nav class="world-nav" aria-label="Outpost navigation">
+            <button type="button" class="world-back" id="location-back-btn">
+                <span aria-hidden="true">←</span> Back
+            </button>
+            <button type="button" class="ab-btn location-edit-btn" id="location-edit-btn" hidden>Edit location text</button>
+        </nav>
+        <div class="editor-toolbar" id="location-editor-toolbar" hidden>
+            <button type="button" class="editor-toolbar__btn" data-act="add-text" title="Add a text box">+ Text</button>
+            <button type="button" class="editor-toolbar__btn" data-act="add-image" title="Add an image box">+ Image</button>
+            <button type="button" class="editor-toolbar__btn" data-cmd="bold" title="Bold"><b>B</b></button>
+            <button type="button" class="editor-toolbar__btn" data-cmd="italic" title="Italic"><i>I</i></button>
+            <button type="button" class="editor-toolbar__btn" data-cmd="formatBlock" data-value="h2" title="Heading">H2</button>
+            <button type="button" class="editor-toolbar__btn" data-cmd="formatBlock" data-value="p" title="Paragraph">¶</button>
+            <button type="button" class="editor-toolbar__btn" data-cmd="insertUnorderedList" title="Bullet list">• List</button>
+            <button type="button" class="editor-toolbar__btn" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
+        </div>
+        <main class="outpost-hero">
+            <p class="outpost-hero__eyebrow" id="outpost-eyebrow">A point of interest</p>
+            <h1 class="outpost-hero__title" id="outpost-title">Placeholder outpost.</h1>
+            <div class="location-canvas" id="location-canvas"></div>
+        </main>
+        <div class="outpost-egg reveal">
+            <span class="outpost-egg__icon" aria-hidden="true">🛰️</span>
+            <p>You've reached the edge of the map.<br>Thanks for exploring — more to find soon.</p>
+        </div>
+    </div>
 
 </body>
 

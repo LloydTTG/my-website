@@ -134,7 +134,26 @@
         decorateCards();
         document.addEventListener('projects:rendered', decorateCards);
         document.addEventListener('testimonials:rendered', decorateCards);
+
+        // Lets other admin-feature scripts (e.g. the globe marker layer,
+        // which admin.js doesn't know about) add their own buttons to the
+        // bar once it exists, instead of building a second floating bar.
+        document.dispatchEvent(new CustomEvent('admin:entered'));
     }
+
+    window.adminBar = {
+        isAdmin: () => isAdmin,
+        addButton(label, onClick) {
+            if (!bar) return null;
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'ab-btn';
+            b.textContent = label;
+            b.addEventListener('click', onClick);
+            bar.insertBefore(b, bar.querySelector('[data-act="signout"]'));
+            return b;
+        },
+    };
 
     async function signOut() {
         await sb.auth.signOut();

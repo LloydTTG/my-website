@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My World — It's Randy Time</title>
+    <meta name="description" content="Step through the portal into a 3D globe.">
+    <meta name="robots" content="noindex">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="supabase-client.js" defer></script>
+    <script src="site-content.js" defer></script>
+    <script src="admin.js" defer></script>
+    <script src="main.js" defer></script>
+    <script type="module" src="globe.js"></script>
+</head>
+
+<body>
+
+    <div class="world-page">
+
+        <canvas id="globe-canvas" class="world-canvas" aria-hidden="true"></canvas>
+
+        <div id="world-view">
+
+            <nav class="world-nav" aria-label="World page navigation">
+                <a href="index.html" class="world-back">
+                    <span aria-hidden="true">←</span> Back
+                </a>
+            </nav>
+
+            <main class="world-hero" id="main">
+                <p class="world-hero__eyebrow" data-content-key="world_hero_eyebrow">You made it through</p>
+                <h1 class="world-hero__title" data-content-key="world_hero_title">Welcome to my world.</h1>
+                <p class="world-hero__desc" data-content-key="world_hero_desc">it's randy time</p>
+            </main>
+
+            <p class="world-hint">Drag to explore</p>
+
+            <div class="globe-markers" id="globe-markers"></div>
+
+        </div>
+
+        <div class="location-chrome" id="location-chrome" hidden>
+            <nav class="world-nav" aria-label="Outpost navigation">
+                <button type="button" class="world-back" id="location-back-btn">
+                    <span aria-hidden="true">←</span> Back
+                </button>
+                <button type="button" class="ab-btn location-edit-btn" id="location-edit-btn" hidden>Edit location text</button>
+            </nav>
+            <div class="editor-toolbar" id="location-editor-toolbar" hidden>
+                <button type="button" class="editor-toolbar__btn" data-act="add-text" title="Add a text box">+ Text</button>
+                <button type="button" class="editor-toolbar__btn" data-act="add-image" title="Add an image box">+ Image</button>
+                <button type="button" class="editor-toolbar__btn" data-cmd="bold" title="Bold"><b>B</b></button>
+                <button type="button" class="editor-toolbar__btn" data-cmd="italic" title="Italic"><i>I</i></button>
+                <button type="button" class="editor-toolbar__btn" data-cmd="formatBlock" data-value="h2" title="Heading">H2</button>
+                <button type="button" class="editor-toolbar__btn" data-cmd="formatBlock" data-value="p" title="Paragraph">¶</button>
+                <button type="button" class="editor-toolbar__btn" data-cmd="insertUnorderedList" title="Bullet list">• List</button>
+                <button type="button" class="editor-toolbar__btn" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
+            </div>
+            <main class="outpost-hero">
+                <p class="outpost-hero__eyebrow" id="outpost-eyebrow">A point of interest</p>
+                <h1 class="outpost-hero__title" id="outpost-title">Placeholder outpost.</h1>
+                <div class="location-canvas" id="location-canvas"></div>
+            </main>
+            <div class="outpost-egg reveal">
+                <span class="outpost-egg__icon" aria-hidden="true">🛰️</span>
+                <p>You've reached the edge of the map.<br>Thanks for exploring — more to find soon.</p>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
