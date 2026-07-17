@@ -224,7 +224,7 @@ if (btn && canvas && siteContent && worldChrome) {
                     title.classList.add('is-collapsed');
                     title.classList.remove('is-fading-out');
                 }, 500); // matches the opacity transition duration above
-            }, 1300);
+            }, 1800);
         }, 500);
     }
 
