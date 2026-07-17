@@ -13,6 +13,75 @@ function uid() {
     return 'b' + Math.random().toString(36).slice(2, 9);
 }
 
+/* ----------------------------------------------------------------
+   Rich-text blocks are rendered with innerHTML (that's the whole point —
+   admin-authored formatting, not just plain text), so the HTML has to be
+   sanitized rather than trusted outright. This isn't just paranoia about
+   a hostile admin: the same html round-trips through the browser's own
+   execCommand/contenteditable and paste handling, which can carry in far
+   more than the toolbar's four buttons ever intended (pasted <script>,
+   event-handler attributes, javascript: links, embedded iframes...). An
+   allowlist (keep only tags/attributes a rich-text editor legitimately
+   produces) is used instead of a blocklist, since a blocklist only ever
+   guards against the specific tricks its author thought of. Runs both at
+   save time (serialize, below) and at render time (renderBlock) so stored
+   content is defused even if it somehow got in some other way — e.g. a
+   row edited directly in the Supabase table editor.
+   ---------------------------------------------------------------- */
+const RICH_TEXT_ALLOWED_TAGS = new Set([
+    'P', 'BR', 'B', 'STRONG', 'I', 'EM', 'U', 'H1', 'H2', 'H3',
+    'UL', 'OL', 'LI', 'A', 'IMG', 'SPAN', 'DIV', 'BLOCKQUOTE', 'CODE', 'PRE',
+]);
+const RICH_TEXT_ALLOWED_ATTRS = { A: ['href', 'target', 'rel'], IMG: ['src', 'alt'] };
+
+function isSafeRichTextUrl(url) {
+    try {
+        const parsed = new URL(url, window.location.href);
+        return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch (err) {
+        return false;
+    }
+}
+
+function sanitizeRichHtml(html) {
+    // A document created this way is never inserted into the live page, so
+    // nothing in it executes (scripts are inert, event handlers never
+    // fire) while it's being picked apart below.
+    const doc = document.implementation.createHTMLDocument('');
+    doc.body.innerHTML = String(html || '');
+
+    const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_ELEMENT);
+    const disallowed = [];
+    let node = walker.nextNode();
+    while (node) {
+        if (!RICH_TEXT_ALLOWED_TAGS.has(node.tagName)) {
+            disallowed.push(node);
+        } else {
+            const keep = RICH_TEXT_ALLOWED_ATTRS[node.tagName] || [];
+            Array.from(node.attributes).forEach((attr) => {
+                if (!keep.includes(attr.name)) { node.removeAttribute(attr.name); return; }
+                if ((attr.name === 'href' || attr.name === 'src') && !isSafeRichTextUrl(attr.value)) {
+                    node.removeAttribute(attr.name);
+                }
+            });
+            // A stripped `target` still leaves a same-tab link with no rel,
+            // which is fine; only force rel when target="_blank" survived,
+            // so the opened page can't reach back via window.opener.
+            if (node.tagName === 'A' && node.getAttribute('target') === '_blank') {
+                node.setAttribute('rel', 'noopener noreferrer');
+            }
+        }
+        node = walker.nextNode();
+    }
+    // Drop disallowed elements entirely (not just unwrapped) — their
+    // content (if any, e.g. a pasted <script>'s text) isn't meaningful to
+    // keep, and dropping the whole subtree avoids having to reason about
+    // what nested disallowed-inside-disallowed structure might resurface.
+    disallowed.forEach((el) => el.remove());
+
+    return doc.body.innerHTML;
+}
+
 // A location's `body` used to be a plain HTML string (the old single
 // flowing rich-text field). Rather than a schema migration, older rows
 // are adopted in place as a single starting text block the admin can
@@ -129,13 +198,13 @@ export function createCanvasEditor(canvasEl, toolbarEl) {
         let contentEl;
         if (data.type === 'image') {
             contentEl = document.createElement('img');
-            contentEl.src = data.src;
+            contentEl.src = isSafeRichTextUrl(data.src) ? data.src : '';
             contentEl.alt = '';
             contentEl.draggable = false;
         } else {
             contentEl = document.createElement('div');
             contentEl.className = 'canvas-block__text';
-            contentEl.innerHTML = data.html || '<p>New text</p>';
+            contentEl.innerHTML = sanitizeRichHtml(data.html || '<p>New text</p>');
             contentEl.addEventListener('focusin', () => { focusedTextEl = contentEl; });
             contentEl.addEventListener('focusout', () => {
                 if (focusedTextEl === contentEl) focusedTextEl = null;
@@ -175,7 +244,7 @@ export function createCanvasEditor(canvasEl, toolbarEl) {
 
     function serialize() {
         return Array.from(blocks.values()).map((b) => {
-            if (b.data.type === 'text') b.data.html = b.contentEl.innerHTML;
+            if (b.data.type === 'text') b.data.html = sanitizeRichHtml(b.contentEl.innerHTML);
             return { ...b.data };
         });
     }
@@ -224,7 +293,15 @@ export function createCanvasEditor(canvasEl, toolbarEl) {
         if (addImageBtn) {
             addImageBtn.addEventListener('click', () => {
                 const url = prompt('Image URL:');
-                if (url) addImageBlock(url);
+                if (!url) return;
+                // renderBlock re-checks this anyway (defense-in-depth against
+                // a row edited outside this UI), but rejecting here too gives
+                // the admin an actual error instead of a silently blank image.
+                if (!isSafeRichTextUrl(url)) {
+                    alert('That doesn\'t look like a valid image URL — it needs to start with http:// or https://.');
+                    return;
+                }
+                addImageBlock(url);
             });
         }
     }

@@ -175,6 +175,12 @@
     function openProjectModal(existing) {
         openModal(existing ? 'Edit project' : 'New project', PROJECT_FIELDS(existing || {}), async (v, close) => {
             if (!v.title || !v.description) return 'Title and description are required.';
+            // projects.js also re-checks this before ever rendering either
+            // field as a real href/src, but catching it here means a typo'd
+            // or malicious scheme (e.g. javascript:) gets rejected with an
+            // actual error instead of just quietly not showing up later.
+            if (v.image_url && !window.isSafeUrl(v.image_url)) return 'Image URL must start with http:// or https://.';
+            if (v.link && !window.isSafeUrl(v.link)) return 'Project link must start with http:// or https://.';
             const payload = { ...v, published: true };
 
             const q = existing
@@ -291,8 +297,13 @@
             btn.disabled = true;
             Promise.all(Array.from(editables).map((el) => {
                 el.removeAttribute('contenteditable');
+                // Sanitized at save time too (not just on render) so what's
+                // actually persisted is already clean — see sanitizeRichHtml
+                // in supabase-client.js.
+                const clean = window.sanitizeRichHtml(el.innerHTML);
+                el.innerHTML = clean;
                 return sb.from('site_content').upsert(
-                    { key: el.dataset.contentKey, value: el.innerHTML },
+                    { key: el.dataset.contentKey, value: clean },
                     { onConflict: 'key' }
                 );
             })).then((results) => {

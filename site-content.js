@@ -18,7 +18,9 @@
 
         data.forEach(({ key, value }) => {
             const el = document.querySelector(`[data-content-key="${key}"]`);
-            if (el && value) el.innerHTML = value; // stored HTML is admin-authored
+            // stored HTML is admin-authored, but sanitized before it's ever
+            // rendered — see the sanitizeRichHtml comment in supabase-client.js.
+            if (el && value) el.innerHTML = window.sanitizeRichHtml(value);
         });
     }
 

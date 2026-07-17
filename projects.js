@@ -76,8 +76,15 @@
     function renderProjects(projects) {
         const esc = window.escapeHtml;
         grid.innerHTML = projects.map((p) => {
-            const media = p.image_url
-                ? `<div class="project-card__media"><img class="project-card__img" src="${esc(p.image_url)}" alt="${esc(p.title)}" loading="lazy"></div>`
+            // escapeHtml alone isn't enough for a URL that becomes a real
+            // href/src — it stops attribute breakout but a javascript: URL
+            // survives HTML-escaping intact and would still run on click.
+            // isSafeUrl rejects anything that isn't a plain http(s) link.
+            const safeImage = p.image_url && window.isSafeUrl(p.image_url) ? p.image_url : '';
+            const safeLink = p.link && window.isSafeUrl(p.link) ? p.link : '';
+
+            const media = safeImage
+                ? `<div class="project-card__media"><img class="project-card__img" src="${esc(safeImage)}" alt="${esc(p.title)}" loading="lazy"></div>`
                 : `<div class="project-card__media project-card__media--placeholder"></div>`;
 
             const inner = `
@@ -94,8 +101,8 @@
 
             const dataAttr = p.id ? ` data-project-id="${esc(p.id)}"` : '';
 
-            return p.link
-                ? `<a class="project-card reveal is-visible" href="${esc(p.link)}" target="_blank" rel="noopener noreferrer"${dataAttr}>${inner}</a>`
+            return safeLink
+                ? `<a class="project-card reveal is-visible" href="${esc(safeLink)}" target="_blank" rel="noopener noreferrer"${dataAttr}>${inner}</a>`
                 : `<article class="project-card reveal is-visible"${dataAttr}>${inner}</article>`;
         }).join('');
 

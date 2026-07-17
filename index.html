@@ -26,74 +26,14 @@
     <script src="supabase-client.js" defer></script>
     <script src="site-content.js" defer></script>
     <script src="main.js" defer></script>
-    <script src="projects.js" defer></script>
-    <script src="testimonials.js" defer></script>
-    <script src="contact.js" defer></script>
     <script src="admin.js" defer></script>
     <script type="module" src="portal-button.js"></script>
 </head>
 
-<body>
+<body class="page-home">
     <a class="visually-hidden skip" href="#main">Skip to main content</a>
 
     <div id="site-content">
-
-    <header class="topnav" id="topnav">
-
-        <h2 class="visually-hidden">Header</h2>
-
-        <div class="wrapper topnav__wrapper">
-
-            <a href="/" class="topnav__homelink" aria-label="Meridian Studio homepage">
-                <span class="topnav__mark" aria-hidden="true"></span>
-                <span class="topnav__wordmark">Randy</span>
-            </a>
-
-            <nav aria-label="Primary navigation">
-
-                <ul class="topnav__links">
-
-                    <li class="topnav__item">
-                        <a href="#services" class="topnav__link">Services</a>
-                    </li>
-
-                    <li class="topnav__item">
-                        <a href="#work" class="topnav__link">Work</a>
-                    </li>
-
-                    <li class="topnav__item">
-                        <a href="#process" class="topnav__link">Process</a>
-                    </li>
-
-                    <li class="topnav__item">
-                        <a href="#testimonials" class="topnav__link">Clients</a>
-                    </li>
-
-                    <li class="topnav__item">
-                        <a href="#contact" class="topnav__link topnav__link--cta">Start a project</a>
-                    </li>
-
-                </ul>
-
-            </nav>
-
-            <button class="topnav__toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
-                <span></span><span></span>
-            </button>
-
-        </div>
-
-        <nav class="mobilenav" id="mobile-menu" aria-label="Mobile navigation" hidden>
-            <ul class="mobilenav__links">
-                <li><a href="#services" class="mobilenav__link">Services</a></li>
-                <li><a href="#work" class="mobilenav__link">Work</a></li>
-                <li><a href="#process" class="mobilenav__link">Process</a></li>
-                <li><a href="#testimonials" class="mobilenav__link">Clients</a></li>
-                <li><a href="#contact" class="mobilenav__link">Start a project</a></li>
-            </ul>
-        </nav>
-
-    </header>
 
     <main id="main">
 
@@ -114,309 +54,16 @@
                     </a>
                 </div>
             </div>
-
-            <div class="hero__stats">
-                <div class="hero__stat reveal">
-                    <span class="hero__stat-value" data-count="6">0</span>
-                    <span class="hero__stat-label">Years in practice</span>
-                </div>
-                <div class="hero__stat reveal">
-                    <span class="hero__stat-value" data-count="48">0</span>
-                    <span class="hero__stat-label">Projects shipped</span>
-                </div>
-                <div class="hero__stat reveal">
-                    <span class="hero__stat-value" data-count="120">0</span>
-                    <span class="hero__stat-label">Students taught</span>
-                </div>
-                <div class="hero__stat reveal">
-                    <span class="hero__stat-value"><span data-count="98">0</span>%</span>
-                    <span class="hero__stat-label">Repeat &amp; referral clients</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============ SERVICES ============ -->
-
-        <section class="services" id="services">
-            <div class="section-head wrapper">
-                <p class="section-head__eyebrow">What we do</p>
-                <h2 class="section-head__title">Three disciplines, one standard.</h2>
-            </div>
-
-            <div class="services__list wrapper">
-
-                <article class="service reveal">
-                    <span class="service__index">01</span>
-                    <div class="service__body">
-                        <h3 class="service__title">Web design &amp; development</h3>
-                        <p class="service__desc">Fast, accessible sites built by hand — from single-page launches to full platforms with databases, auth, and admin tooling. Designed in the open, shipped production-ready.</p>
-                        <ul class="service__tags">
-                            <li>Brand sites</li>
-                            <li>E-commerce</li>
-                            <li>Web apps</li>
-                            <li>Performance audits</li>
-                        </ul>
-                    </div>
-                    <a href="#contact" class="service__link" aria-label="Enquire about web design and development">Enquire<span aria-hidden="true"> →</span></a>
-                </article>
-
-                <article class="service reveal">
-                    <span class="service__index">02</span>
-                    <div class="service__body">
-                        <h3 class="service__title">Tutoring &amp; mentoring</h3>
-                        <p class="service__desc">One-on-one sessions in programming, mathematics, and the sciences — for students, career changers, and teams. Structured plans, real projects, measurable progress.</p>
-                        <ul class="service__tags">
-                            <li>Programming</li>
-                            <li>Maths &amp; sciences</li>
-                            <li>Exam prep</li>
-                            <li>Career mentoring</li>
-                        </ul>
-                    </div>
-                    <a href="#contact" class="service__link" aria-label="Enquire about tutoring and mentoring">Enquire<span aria-hidden="true"> →</span></a>
-                </article>
-
-                <article class="service reveal">
-                    <span class="service__index">03</span>
-                    <div class="service__body">
-                        <h3 class="service__title">Freelance services</h3>
-                        <p class="service__desc">Technical writing, automation, data cleanup, integrations — the unglamorous work that keeps a business running. Scoped clearly, quoted upfront, delivered when promised.</p>
-                        <ul class="service__tags">
-                            <li>Automation</li>
-                            <li>Technical writing</li>
-                            <li>Integrations</li>
-                            <li>Maintenance</li>
-                        </ul>
-                    </div>
-                    <a href="#contact" class="service__link" aria-label="Enquire about freelance services">Enquire<span aria-hidden="true"> →</span></a>
-                </article>
-
-            </div>
-        </section>
-
-        <!-- ============ WORK ============ -->
-
-        <section class="work" id="work">
-            <div class="section-head wrapper">
-                <p class="section-head__eyebrow">Selected work</p>
-                <h2 class="section-head__title">Recent projects.</h2>
-            </div>
-
-            <div class="work__grid wrapper" id="work-grid" aria-live="polite">
-                <p class="work__loading">Loading projects…</p>
-            </div>
-        </section>
-
-        <!-- ============ PROCESS ============ -->
-
-        <section class="process" id="process">
-            <div class="section-head wrapper">
-                <p class="section-head__eyebrow">How it works</p>
-                <h2 class="section-head__title">A process you can set a watch to.</h2>
-            </div>
-
-            <ol class="process__steps wrapper">
-
-                <li class="process__step reveal">
-                    <span class="process__num">T−4</span>
-                    <h3 class="process__title">Discovery</h3>
-                    <p class="process__desc">A call to understand the goal, the audience, and the constraints. You get a written scope and a fixed quote within 48 hours.</p>
-                </li>
-
-                <li class="process__step reveal">
-                    <span class="process__num">T−3</span>
-                    <h3 class="process__title">Design</h3>
-                    <p class="process__desc">Wireframes first, then full designs. You review real pages in the browser — not static mockups — and nothing moves forward without sign-off.</p>
-                </li>
-
-                <li class="process__step reveal">
-                    <span class="process__num">T−2</span>
-                    <h3 class="process__title">Build</h3>
-                    <p class="process__desc">Weekly progress links you can click through. Accessibility, performance, and security checks run before anything is called done.</p>
-                </li>
-
-                <li class="process__step reveal">
-                    <span class="process__num">T−0</span>
-                    <h3 class="process__title">Launch &amp; support</h3>
-                    <p class="process__desc">Deployment, handover documentation, and 30 days of included support. After that, a maintenance plan if you want one — no lock-in.</p>
-                </li>
-
-            </ol>
-        </section>
-
-        <!-- ============ TESTIMONIALS ============ -->
-
-        <section class="testimonials" id="testimonials">
-            <div class="section-head wrapper">
-                <p class="section-head__eyebrow">Clients</p>
-                <h2 class="section-head__title">In their words.</h2>
-            </div>
-
-            <div class="testimonials__viewport wrapper">
-                <div class="testimonials__track" id="testimonials-track">
-                    <p class="testimonials__loading">Loading testimonials…</p>
-                </div>
-                <div class="testimonials__controls">
-                    <button class="testimonials__btn" id="testimonial-prev" aria-label="Previous testimonial" disabled></button>
-                    <div class="testimonials__dots" id="testimonial-dots" role="tablist" aria-label="Testimonial pages"></div>
-                    <button class="testimonials__btn testimonials__btn--next" id="testimonial-next" aria-label="Next testimonial" disabled></button>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============ CONTACT ============ -->
-
-        <section class="contact" id="contact">
-            <div class="contact__inner wrapper">
-
-                <div class="contact__intro">
-                    <p class="section-head__eyebrow">Contact</p>
-                    <h2 class="section-head__title">Tell us what you're building.</h2>
-                    <p class="contact__blurb">Every enquiry gets a personal reply within one business day. If we're not the right fit, we'll say so — and point you to someone who is.</p>
-
-                    <dl class="contact__facts">
-                        <div class="contact__fact">
-                            <dt>Response time</dt>
-                            <dd>&lt; 24 hours</dd>
-                        </div>
-                        <div class="contact__fact">
-                            <dt>Availability</dt>
-                            <dd>Taking new projects</dd>
-                        </div>
-                        <div class="contact__fact">
-                            <dt>Based in</dt>
-                            <dd>Kuala Lumpur / Remote</dd>
-                        </div>
-                    </dl>
-                </div>
-
-                <form class="contact__form" id="contact-form" novalidate>
-
-                    <div class="contact__row">
-                        <div class="contact__field">
-                            <label class="contact__label" for="cf-name">Name</label>
-                            <input class="contact__input" type="text" id="cf-name" name="name" autocomplete="name" required>
-                        </div>
-                        <div class="contact__field">
-                            <label class="contact__label" for="cf-email">Email</label>
-                            <input class="contact__input" type="email" id="cf-email" name="email" autocomplete="email" required>
-                        </div>
-                    </div>
-
-                    <div class="contact__field">
-                        <label class="contact__label" for="cf-service">What do you need?</label>
-                        <select class="contact__input contact__select" id="cf-service" name="service" required>
-                            <option value="" selected disabled>Select a service</option>
-                            <option value="web">Web design &amp; development</option>
-                            <option value="tutoring">Tutoring &amp; mentoring</option>
-                            <option value="freelance">Freelance services</option>
-                            <option value="other">Something else</option>
-                        </select>
-                    </div>
-
-                    <div class="contact__field">
-                        <label class="contact__label" for="cf-message">Project details</label>
-                        <textarea class="contact__input contact__textarea" id="cf-message" name="message" rows="6" placeholder="Timeline, budget range, links — whatever you have." required></textarea>
-                    </div>
-
-                    <p class="contact__error" id="contact-error" hidden></p>
-
-                    <button class="btn btn--primary contact__submit" type="submit" id="contact-submit">Send enquiry</button>
-
-                    <div class="contact__success" id="contact-success" hidden>
-                        <h3>Received.</h3>
-                        <p>Thanks — we'll reply within one business day.</p>
-                    </div>
-
-                </form>
-
-            </div>
         </section>
 
     </main>
-
-    <footer class="footer">
-        <h2 class="visually-hidden">Footer</h2>
-
-        <div class="footer__inner">
-
-            <div class="footer__brand">
-                <a href="/" class="footer__logo-link" aria-label="Meridian Studio homepage">
-                    <span class="topnav__mark" aria-hidden="true"></span>
-                    <span class="footer__wordmark">Meridian</span>
-                </a>
-                <p class="footer__tagline">Web design, development, and tutoring — done properly.</p>
-            </div>
-
-            <nav class="footer__nav" aria-label="Footer navigation">
-                <div class="footer__col">
-                    <h3 class="footer__col-heading">Studio</h3>
-                    <ul class="footer__links">
-                        <li><a href="#services" class="footer__link">Services</a></li>
-                        <li><a href="#work" class="footer__link">Work</a></li>
-                        <li><a href="#process" class="footer__link">Process</a></li>
-                        <li><a href="#testimonials" class="footer__link">Clients</a></li>
-                    </ul>
-                </div>
-                <div class="footer__col">
-                    <h3 class="footer__col-heading">Get in touch</h3>
-                    <ul class="footer__links">
-                        <li><a href="#contact" class="footer__link">Start a project</a></li>
-                        <li><a href="mailto:hello@meridian.studio" class="footer__link">hello@meridian.studio</a></li>
-                    </ul>
-                </div>
-            </nav>
-
-            <div class="footer__social">
-                <h3 class="footer__col-heading">Elsewhere</h3>
-                <div class="footer__social-links">
-
-                    <a href="#" class="footer__social-link" aria-label="GitHub">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
-                        </svg>
-                        GitHub
-                    </a>
-
-                    <a href="#" class="footer__social-link" aria-label="LinkedIn">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                        </svg>
-                        LinkedIn
-                    </a>
-
-                    <a href="#" class="footer__social-link" aria-label="Instagram">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <rect x="2" y="2" width="20" height="20" rx="5"/>
-                            <circle cx="12" cy="12" r="4"/>
-                            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-                        </svg>
-                        Instagram
-                    </a>
-
-                </div>
-            </div>
-
-        </div>
-
-        <div class="footer__bottom">
-            <div class="footer__bottom-inner">
-                <p class="footer__copyright">© 2026 Meridian Studio. All rights reserved.</p>
-                <nav class="footer__legal" aria-label="Legal links">
-                    <a href="#contact" class="footer__legal-link">Contact</a>
-                    <a href="#" class="footer__legal-link">Accessibility</a>
-                    <a href="#" class="footer__legal-link">Privacy</a>
-                </nav>
-            </div>
-        </div>
-
-    </footer>
 
     </div>
 
     <div class="world-chrome" id="world-chrome" hidden>
         <nav class="world-nav" aria-label="World page navigation">
             <button type="button" class="world-back" id="world-back-btn">
-                <span aria-hidden="true">←</span> Back
+                Big Crunch
             </button>
         </nav>
         <main class="world-hero">
@@ -432,7 +79,7 @@
     <div class="location-chrome" id="location-chrome" hidden>
         <nav class="world-nav" aria-label="Outpost navigation">
             <button type="button" class="world-back" id="location-back-btn">
-                <span aria-hidden="true">←</span> Back
+                Big Crunch
             </button>
             <button type="button" class="ab-btn location-edit-btn" id="location-edit-btn" hidden>Edit location text</button>
         </nav>
@@ -446,6 +93,14 @@
             <button type="button" class="editor-toolbar__btn" data-cmd="insertUnorderedList" title="Bullet list">• List</button>
             <button type="button" class="editor-toolbar__btn" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
         </div>
+        <div class="tree-branch-nav" id="tree-branch-nav" hidden>
+            <span class="tree-branch-nav__label" id="tree-branch-label">Branch 1 / 5</span>
+        </div>
+        <!-- Branch/leaf hotspots need to stay interactive while location-chrome
+             itself is showing (you're "inside" the tree) — unlike #globe-markers,
+             which lives inside #world-chrome and gets hidden the moment any
+             location is entered. -->
+        <div class="globe-markers" id="tree-nav-markers"></div>
         <main class="outpost-hero">
             <p class="outpost-hero__eyebrow" id="outpost-eyebrow">A point of interest</p>
             <h1 class="outpost-hero__title" id="outpost-title">Placeholder outpost.</h1>
