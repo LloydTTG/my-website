@@ -2,1048 +2,243 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>The Archives</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Work</title>
+<meta name="description" content="Engineering student. Projects, experience and education.">
+<meta name="theme-color" content="#0a0a0c">
 
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-/* One purple-tinted neutral ramp replaces Tailwind's zinc, so every grey
-   reads as part of the palette instead of washing out against black.
-   Tones were checked against the resolved card surface (#0c0a11):
-   night-400 = 6.6:1, night-500 = 5.0:1, both above the 4.5:1 AA line.
-   The 7-row grid keys are extensions: Tailwind ships 1 to 6 only. */
-tailwind.config = {
-    theme: {
-        extend: {
-            colors: {
-                ink: '#050505',
-                night: {
-                    100: '#f3f1fa', 200: '#ded9ee', 300: '#bdb4d9',
-                    400: '#9a8fc0', 500: '#847aa8', 600: '#6d6190',
-                    700: '#362f4d', 800: '#1f1a2e', 900: '#130f1d',
-                    950: '#0a0711',
-                },
-                accent: { DEFAULT: '#a78bfa', deep: '#8b5cf6', indigo: '#818cf8' },
-            },
-            gridTemplateRows: { 7: 'repeat(7, minmax(0, 1fr))' },
-            gridRow: { 'span-7': 'span 7 / span 7' },
-        },
-    },
-};
-</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
-<style>
-    :root { color-scheme: dark; }
-    [hidden] { display: none !important; }
-
-    body {
-        background-color: #050505;
-        background-image:
-            linear-gradient(rgba(139,92,246,.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(139,92,246,.05) 1px, transparent 1px);
-        background-size: 46px 46px;
-        background-position: -1px -1px;
-    }
-    body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        background:
-            radial-gradient(60rem 40rem at 50% -10%, rgba(139,92,246,.13), transparent 70%),
-            radial-gradient(ellipse at 50% 0%, transparent 42%, #050505 88%);
-    }
-
-    .fade-in { animation: fadeIn .45s ease-out both; }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(6px); }
-        to   { opacity: 1; transform: none; }
-    }
-
-    .ring-progress { transition: stroke-dashoffset .9s cubic-bezier(.22,1,.36,1); }
-
-    .tile img { transition: transform .5s cubic-bezier(.22,1,.36,1); }
-    .tile:hover img { transform: scale(1.05); }
-
-    /* hologram */
-    @keyframes scan {
-        0%   { transform: translateY(-16px); opacity: 0; }
-        12%  { opacity: 1; }
-        88%  { opacity: 1; }
-        100% { transform: translateY(302px); opacity: 0; }
-    }
-    .scanline { animation: scan 5s cubic-bezier(.4,0,.6,1) infinite; }
-
-    @keyframes holoBreathe { 0%, 100% { opacity: .9; } 50% { opacity: 1; } }
-    .holo-figure { animation: holoBreathe 5s ease-in-out infinite; }
-
-    @keyframes plinth { 0%, 100% { opacity: .4; } 50% { opacity: .75; } }
-    .holo-plinth { animation: plinth 5s ease-in-out infinite; }
-
-    .rail::-webkit-scrollbar { width: 6px; height: 6px; }
-    .rail::-webkit-scrollbar-track { background: transparent; }
-    .rail::-webkit-scrollbar-thumb { background: #362f4d; border-radius: 99px; }
-    .rail::-webkit-scrollbar-thumb:hover { background: #544a70; }
-    .rail { scrollbar-width: thin; scrollbar-color: #362f4d transparent; }
-
-    @media (prefers-reduced-motion: reduce) {
-        *, *::before, *::after {
-            animation-duration: .01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: .01ms !important;
-            scroll-behavior: auto !important;
-        }
-        .card:hover { transform: none !important; }
-        .tile:hover img { transform: none !important; }
-        /* A one-shot sweep would flash and park at the bottom, so drop it. */
-        .scanline { display: none !important; }
-        .holo-figure, .holo-plinth { animation: none !important; opacity: 1 !important; }
-    }
-</style>
+<!-- Drops the curtain before first paint, so the page is never seen
+     half-built between navigations. With JS off it never runs and the
+     page simply renders as normal. -->
+<script>document.documentElement.classList.add('nav-in');</script>
 </head>
 
-<body class="min-h-screen text-night-100 antialiased selection:bg-accent/40">
+<body>
 
-<!-- At lg the bento is pinned to the viewport. Every card has a fixed
-     header and a body that scrolls on its own, so no card ever scrolls
-     as a whole. Below lg it falls back to normal document flow. -->
-<main class="relative mx-auto w-full max-w-[1700px] px-4 py-6 lg:h-screen lg:overflow-hidden lg:px-7 lg:py-7">
-    <div id="bento" class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:h-full lg:grid-cols-5 lg:grid-rows-7">
-
-    <!-- ============================ HERO ============================ -->
-    <section class="card flex min-h-0 flex-col md:col-span-2 lg:col-start-1 lg:row-start-1 lg:col-span-2 lg:row-span-3 rounded-2xl border border-night-700/70 bg-night-900/50 p-7 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_0_40px_rgba(167,139,250,0.18)] lg:p-8">
-        <p class="shrink-0 text-base font-semibold uppercase tracking-[0.22em] text-accent">The Archives // Public Diary</p>
-
-        <div id="sec-profile" class="rail mt-6 min-h-0 flex-1 overflow-y-auto">
-            <div data-skeleton class="flex items-center gap-6">
-                <div class="h-28 w-28 shrink-0 animate-pulse rounded-2xl bg-night-800"></div>
-                <div class="flex-1 space-y-4">
-                    <div class="h-12 w-2/3 animate-pulse rounded-lg bg-night-800"></div>
-                    <div class="h-5 w-full animate-pulse rounded bg-night-800"></div>
-                </div>
-            </div>
-
-            <div data-content hidden>
-                <div class="flex items-center gap-6">
-                    <div id="avatar-frame" hidden class="tile h-28 w-28 shrink-0 overflow-hidden rounded-2xl border border-night-700 bg-night-950">
-                        <img id="avatar-img" alt="" class="h-full w-full object-cover" loading="lazy" decoding="async">
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <h1 id="owner-name" class="truncate text-5xl font-bold leading-[1.05] tracking-tighter text-white"></h1>
-                        <p id="tagline" class="mt-3 text-xl leading-relaxed text-night-300"></p>
-                    </div>
-                </div>
-
-                <!-- Fixed-height tiles that scroll sideways, so any number of
-                     images fits without disturbing the grid. -->
-                <div id="gallery-strip" hidden class="rail mt-6 flex gap-3 overflow-x-auto pb-2"></div>
-            </div>
-
-            <div data-error hidden class="rounded-xl border border-amber-500/40 bg-amber-950/30 px-4 py-3 text-base text-amber-300"></div>
-        </div>
-
-        <div id="sec-status" class="mt-5 shrink-0 border-t border-night-700/70 pt-5">
-            <div data-skeleton class="h-5 w-64 animate-pulse rounded bg-night-800"></div>
-            <div data-content hidden class="flex flex-wrap items-center gap-3">
-                <span class="relative flex h-2.5 w-2.5">
-                    <span id="status-ping" class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-70"></span>
-                    <span id="status-dot" class="relative inline-flex h-2.5 w-2.5 rounded-full bg-accent"></span>
-                </span>
-                <span class="font-mono text-base uppercase tracking-wider text-night-500">System status:</span>
-                <span id="status-text" class="font-mono text-base uppercase tracking-wider text-night-200"></span>
-            </div>
-            <div data-error hidden class="font-mono text-base text-amber-400"></div>
-        </div>
-    </section>
-
-    <!-- ============================= MIND ============================= -->
-    <section class="card flex min-h-0 flex-col md:col-span-2 lg:col-start-3 lg:row-start-1 lg:col-span-2 lg:row-span-4 rounded-2xl border border-night-700/70 bg-night-900/50 p-7 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_0_40px_rgba(167,139,250,0.18)] lg:p-8">
-        <div class="flex shrink-0 flex-wrap items-baseline justify-between gap-3">
-            <h2 class="text-4xl font-bold tracking-tighter text-white">Mind</h2>
-            <span class="font-mono text-base uppercase tracking-[0.18em] text-accent/90">Academic standing</span>
-        </div>
-
-        <!-- Fixed block: the ring never scrolls out of view. -->
-        <div id="sec-academics" class="mt-5 shrink-0">
-            <div data-skeleton class="flex flex-col items-center gap-4">
-                <div class="h-44 w-44 animate-pulse rounded-full bg-night-800"></div>
-                <div class="h-5 w-52 animate-pulse rounded bg-night-800"></div>
-            </div>
-
-            <div data-content hidden class="flex flex-col items-center">
-                <div class="relative h-44 w-44">
-                    <svg viewBox="0 0 120 120" class="h-full w-full -rotate-90" aria-hidden="true">
-                        <defs>
-                            <linearGradient id="gpaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%"   stop-color="#818cf8"/>
-                                <stop offset="55%"  stop-color="#a78bfa"/>
-                                <stop offset="100%" stop-color="#c084fc"/>
-                            </linearGradient>
-                        </defs>
-                        <!-- The track must stay visible: too dark and a 94%
-                             arc reads as a broken circle, not a full one. -->
-                        <circle cx="60" cy="60" r="54" fill="none" stroke="#362f4d" stroke-width="7"/>
-                        <circle id="gpa-ring" class="ring-progress" cx="60" cy="60" r="54"
-                                fill="none" stroke="url(#gpaGrad)" stroke-width="7" stroke-linecap="round"
-                                stroke-dasharray="339.292" stroke-dashoffset="339.292"/>
-                    </svg>
-                    <div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                        <div class="flex items-baseline">
-                            <span id="gpa-value" class="text-4xl font-semibold tracking-tight text-white"></span>
-                            <span id="gpa-unit" class="ml-1 text-lg font-medium text-night-400"></span>
-                        </div>
-                        <span id="gpa-label" class="mt-1.5 font-mono text-sm uppercase tracking-[0.25em] text-accent/80"></span>
-                    </div>
-                </div>
-                <p id="degree" class="mt-4 max-w-sm text-center text-lg font-medium leading-snug text-night-200"></p>
-                <p id="gpa-updated" class="mt-1.5 text-center font-mono text-sm uppercase tracking-wider text-night-500"></p>
-            </div>
-
-            <div data-empty hidden class="py-10 text-center text-lg text-night-500">No academic record yet.</div>
-            <div data-error hidden class="rounded-xl border border-amber-500/40 bg-amber-950/30 px-4 py-3 text-base text-amber-300"></div>
-        </div>
-
-        <!-- Only the milestone list scrolls. -->
-        <div id="sec-milestones" class="mt-5 flex min-h-0 flex-1 flex-col border-t border-night-700/70 pt-5">
-            <h3 class="shrink-0 font-mono text-base uppercase tracking-[0.18em] text-accent/90">Milestones</h3>
-
-            <div data-skeleton class="mt-4 space-y-4">
-                <div class="h-5 w-full animate-pulse rounded bg-night-800"></div>
-                <div class="h-5 w-4/5 animate-pulse rounded bg-night-800"></div>
-            </div>
-            <ul data-content hidden id="milestone-list" class="rail mt-4 min-h-0 flex-1 space-y-4 overflow-y-auto pr-2"></ul>
-            <div data-empty hidden class="mt-4 text-lg text-night-500">Nothing logged yet.</div>
-            <div data-error hidden class="mt-4 rounded-xl border border-amber-500/40 bg-amber-950/30 px-4 py-3 text-base text-amber-300"></div>
-        </div>
-    </section>
-
-    <!-- ============================ VESSEL ============================ -->
-    <section class="card flex min-h-0 flex-col md:col-span-2 lg:col-start-5 lg:row-start-1 lg:col-span-1 lg:row-span-7 rounded-2xl border border-night-700/70 bg-night-900/50 p-6 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_0_40px_rgba(167,139,250,0.18)] lg:p-7">
-        <div class="shrink-0">
-            <h2 class="text-3xl font-bold tracking-tighter text-white">Vessel</h2>
-            <p class="mt-1.5 font-mono text-sm uppercase tracking-[0.18em] text-accent/90">Physical specs</p>
-        </div>
-
-        <div class="relative mt-5 min-h-[240px] flex-1 overflow-hidden rounded-xl border border-accent/15 bg-[radial-gradient(ellipse_at_50%_84%,rgba(139,92,246,.16),transparent_62%)]">
-            <svg viewBox="0 0 140 300" class="h-full w-full" preserveAspectRatio="xMidYMid meet"
-                 role="img" aria-label="Stylised hologram of a human figure">
-                <defs>
-                    <linearGradient id="holoStroke" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%"   stop-color="#ede9fe"/>
-                        <stop offset="45%"  stop-color="#a78bfa"/>
-                        <stop offset="100%" stop-color="#6366f1"/>
-                    </linearGradient>
-                    <linearGradient id="holoFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%"   stop-color="#a78bfa" stop-opacity=".26"/>
-                        <stop offset="100%" stop-color="#6366f1" stop-opacity=".05"/>
-                    </linearGradient>
-                    <linearGradient id="scanGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%"   stop-color="#ede9fe" stop-opacity="0"/>
-                        <stop offset="50%"  stop-color="#ede9fe" stop-opacity=".26"/>
-                        <stop offset="100%" stop-color="#ede9fe" stop-opacity="0"/>
-                    </linearGradient>
-                    <filter id="holoGlow" x="-60%" y="-60%" width="220%" height="220%">
-                        <feGaussianBlur stdDeviation="1.9" result="b"/>
-                        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-                    </filter>
-                    <clipPath id="holoClip">
-                        <path d="M63.0 46.0 C59.3 47.7 57.8 53.2 55.0 56.0 C52.2 58.8 48.3 59.7 46.0 63.0 C43.7 66.3 42.2 69.8 41.0 76.0 C39.8 82.2 39.5 92.0 39.0 100.0 C38.5 108.0 38.3 115.3 38.0 124.0 C37.7 132.7 37.2 144.0 37.0 152.0 C36.8 160.0 36.5 165.7 37.0 172.0 C37.5 178.3 38.5 187.2 40.0 190.0 C41.5 192.8 45.2 192.0 46.0 189.0 C46.8 186.0 45.0 178.2 45.0 172.0 C45.0 165.8 45.7 160.0 46.0 152.0 C46.3 144.0 46.5 132.7 47.0 124.0 C47.5 115.3 48.5 107.0 49.0 100.0 C49.5 93.0 49.0 83.2 50.0 82.0 C51.0 80.8 54.5 88.7 55.0 93.0 C55.5 97.3 52.8 101.8 53.0 108.0 C53.2 114.2 56.5 122.7 56.0 130.0 C55.5 137.3 51.0 144.3 50.0 152.0 C49.0 159.7 49.5 167.0 50.0 176.0 C50.5 185.0 52.2 197.7 53.0 206.0 C53.8 214.3 54.5 219.3 55.0 226.0 C55.5 232.7 55.5 239.3 56.0 246.0 C56.5 252.7 58.5 260.5 58.0 266.0 C57.5 271.5 51.5 276.8 53.0 279.0 C54.5 281.2 64.8 281.2 67.0 279.0 C69.2 276.8 66.2 274.8 66.0 266.0 C65.8 257.2 65.8 237.3 66.0 226.0 C66.2 214.7 66.3 206.7 67.0 198.0 C67.7 189.3 69.5 178.0 70.0 174.0 C70.5 170.0 69.5 170.0 70.0 174.0 C70.5 178.0 72.3 189.3 73.0 198.0 C73.7 206.7 73.8 214.7 74.0 226.0 C74.2 237.3 74.2 257.2 74.0 266.0 C73.8 274.8 70.8 276.8 73.0 279.0 C75.2 281.2 85.5 281.2 87.0 279.0 C88.5 276.8 82.5 271.5 82.0 266.0 C81.5 260.5 83.5 252.7 84.0 246.0 C84.5 239.3 84.5 232.7 85.0 226.0 C85.5 219.3 86.2 214.3 87.0 206.0 C87.8 197.7 89.5 185.0 90.0 176.0 C90.5 167.0 91.0 159.7 90.0 152.0 C89.0 144.3 84.5 137.3 84.0 130.0 C83.5 122.7 86.8 114.2 87.0 108.0 C87.2 101.8 84.5 97.3 85.0 93.0 C85.5 88.7 89.0 80.8 90.0 82.0 C91.0 83.2 90.5 93.0 91.0 100.0 C91.5 107.0 92.5 115.3 93.0 124.0 C93.5 132.7 93.7 144.0 94.0 152.0 C94.3 160.0 95.0 165.8 95.0 172.0 C95.0 178.2 93.2 186.0 94.0 189.0 C94.8 192.0 98.5 192.8 100.0 190.0 C101.5 187.2 102.5 178.3 103.0 172.0 C103.5 165.7 103.2 160.0 103.0 152.0 C102.8 144.0 102.3 132.7 102.0 124.0 C101.7 115.3 101.5 108.0 101.0 100.0 C100.5 92.0 100.2 82.2 99.0 76.0 C97.8 69.8 96.3 66.3 94.0 63.0 C91.7 59.7 87.8 58.8 85.0 56.0 C82.2 53.2 80.7 47.7 77.0 46.0 C73.3 44.3 66.7 44.3 63.0 46.0 Z"/>
-                        <ellipse cx="70" cy="26" rx="14" ry="18"/>
-                    </clipPath>
-                </defs>
-
-                <g class="holo-figure" filter="url(#holoGlow)">
-                    <ellipse cx="70" cy="26" rx="14" ry="18" fill="url(#holoFill)" stroke="url(#holoStroke)" stroke-width="1.4"/>
-                    <path d="M63.0 46.0 C59.3 47.7 57.8 53.2 55.0 56.0 C52.2 58.8 48.3 59.7 46.0 63.0 C43.7 66.3 42.2 69.8 41.0 76.0 C39.8 82.2 39.5 92.0 39.0 100.0 C38.5 108.0 38.3 115.3 38.0 124.0 C37.7 132.7 37.2 144.0 37.0 152.0 C36.8 160.0 36.5 165.7 37.0 172.0 C37.5 178.3 38.5 187.2 40.0 190.0 C41.5 192.8 45.2 192.0 46.0 189.0 C46.8 186.0 45.0 178.2 45.0 172.0 C45.0 165.8 45.7 160.0 46.0 152.0 C46.3 144.0 46.5 132.7 47.0 124.0 C47.5 115.3 48.5 107.0 49.0 100.0 C49.5 93.0 49.0 83.2 50.0 82.0 C51.0 80.8 54.5 88.7 55.0 93.0 C55.5 97.3 52.8 101.8 53.0 108.0 C53.2 114.2 56.5 122.7 56.0 130.0 C55.5 137.3 51.0 144.3 50.0 152.0 C49.0 159.7 49.5 167.0 50.0 176.0 C50.5 185.0 52.2 197.7 53.0 206.0 C53.8 214.3 54.5 219.3 55.0 226.0 C55.5 232.7 55.5 239.3 56.0 246.0 C56.5 252.7 58.5 260.5 58.0 266.0 C57.5 271.5 51.5 276.8 53.0 279.0 C54.5 281.2 64.8 281.2 67.0 279.0 C69.2 276.8 66.2 274.8 66.0 266.0 C65.8 257.2 65.8 237.3 66.0 226.0 C66.2 214.7 66.3 206.7 67.0 198.0 C67.7 189.3 69.5 178.0 70.0 174.0 C70.5 170.0 69.5 170.0 70.0 174.0 C70.5 178.0 72.3 189.3 73.0 198.0 C73.7 206.7 73.8 214.7 74.0 226.0 C74.2 237.3 74.2 257.2 74.0 266.0 C73.8 274.8 70.8 276.8 73.0 279.0 C75.2 281.2 85.5 281.2 87.0 279.0 C88.5 276.8 82.5 271.5 82.0 266.0 C81.5 260.5 83.5 252.7 84.0 246.0 C84.5 239.3 84.5 232.7 85.0 226.0 C85.5 219.3 86.2 214.3 87.0 206.0 C87.8 197.7 89.5 185.0 90.0 176.0 C90.5 167.0 91.0 159.7 90.0 152.0 C89.0 144.3 84.5 137.3 84.0 130.0 C83.5 122.7 86.8 114.2 87.0 108.0 C87.2 101.8 84.5 97.3 85.0 93.0 C85.5 88.7 89.0 80.8 90.0 82.0 C91.0 83.2 90.5 93.0 91.0 100.0 C91.5 107.0 92.5 115.3 93.0 124.0 C93.5 132.7 93.7 144.0 94.0 152.0 C94.3 160.0 95.0 165.8 95.0 172.0 C95.0 178.2 93.2 186.0 94.0 189.0 C94.8 192.0 98.5 192.8 100.0 190.0 C101.5 187.2 102.5 178.3 103.0 172.0 C103.5 165.7 103.2 160.0 103.0 152.0 C102.8 144.0 102.3 132.7 102.0 124.0 C101.7 115.3 101.5 108.0 101.0 100.0 C100.5 92.0 100.2 82.2 99.0 76.0 C97.8 69.8 96.3 66.3 94.0 63.0 C91.7 59.7 87.8 58.8 85.0 56.0 C82.2 53.2 80.7 47.7 77.0 46.0 C73.3 44.3 66.7 44.3 63.0 46.0 Z" fill="url(#holoFill)" stroke="url(#holoStroke)" stroke-width="1.4"/>
-                </g>
-
-                <!-- Contour lines, clipped to the body so they read as
-                     topography over the form rather than a grid behind it. -->
-                <g clip-path="url(#holoClip)" stroke="#c4b5fd" fill="none" opacity=".5">
-                    <path stroke-width=".8" d="M47 64 Q70 73 93 64"/>
-                    <path stroke-width=".7" d="M51 86 Q70 93 89 86 M52 100 Q70 107 88 100 M53 114 Q70 120 87 114 M55 128 Q70 134 85 128 M53 144 Q70 151 87 144 M51 162 Q70 169 89 162"/>
-                    <path stroke-width=".6" d="M50 184 H90 M52 206 H88 M54 228 H86 M55 250 H85 M56 270 H84"/>
-                    <path stroke-width=".55" d="M70 48 V174 M60 68 V150 M80 68 V150"/>
-                </g>
-
-                <g class="holo-plinth">
-                    <ellipse cx="70" cy="288" rx="40" ry="7" fill="none" stroke="#a78bfa" stroke-width="1.2"/>
-                    <ellipse cx="70" cy="288" rx="22" ry="4" fill="#a78bfa" opacity=".18"/>
-                </g>
-
-                <rect class="scanline" x="0" y="0" width="140" height="44" fill="url(#scanGrad)"/>
-            </svg>
-        </div>
-
-        <!-- Mass is read from body_log, never typed in, so it cannot drift
-             out of step with the chart in the Iron card. -->
-        <div id="sec-mass" class="mt-5 shrink-0">
-            <div data-skeleton class="h-14 w-full animate-pulse rounded-xl bg-night-800"></div>
-            <div data-content hidden class="flex items-baseline justify-between gap-3 rounded-xl border border-accent/25 bg-accent/[0.06] px-4 py-3">
-                <span class="font-mono text-sm uppercase tracking-[0.18em] text-accent/90">Mass</span>
-                <span class="whitespace-nowrap">
-                    <span id="mass-value" class="text-3xl font-bold tracking-tighter text-white"></span>
-                    <span class="ml-1 text-base font-medium text-night-400">kg</span>
-                </span>
-            </div>
-            <div data-empty hidden></div>
-            <div data-error hidden></div>
-        </div>
-
-        <div id="sec-vitals" class="rail mt-4 max-h-60 shrink-0 overflow-y-auto border-t border-night-700/70 pt-4">
-            <div data-skeleton class="space-y-3">
-                <div class="h-5 w-full animate-pulse rounded bg-night-800"></div>
-                <div class="h-5 w-4/5 animate-pulse rounded bg-night-800"></div>
-            </div>
-            <dl data-content hidden id="vitals-list" class="space-y-3"></dl>
-            <div data-empty hidden class="text-base text-night-500">No specs recorded yet.</div>
-            <div data-error hidden class="text-base text-amber-400"></div>
-        </div>
-    </section>
-
-    <!-- ============================= IRON ============================= -->
-    <section class="card flex min-h-0 flex-col md:col-span-2 lg:col-start-1 lg:row-start-4 lg:col-span-2 lg:row-span-4 rounded-2xl border border-night-700/70 bg-night-900/50 p-7 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_0_40px_rgba(167,139,250,0.18)] lg:p-8">
-        <div class="flex shrink-0 flex-wrap items-baseline justify-between gap-3">
-            <h2 class="text-4xl font-bold tracking-tighter text-white">Iron</h2>
-            <span class="font-mono text-base uppercase tracking-[0.18em] text-accent/90">Bodyweight and strength</span>
-        </div>
-
-        <!-- Takes the slack, so an empty state fills the card instead of
-             leaving a dead band above the records row. -->
-        <div id="sec-weight" class="mt-6 flex min-h-0 flex-1 flex-col">
-            <div data-skeleton class="flex min-h-0 flex-1 flex-col">
-                <div class="h-12 w-44 shrink-0 animate-pulse rounded-lg bg-night-800"></div>
-                <div class="mt-6 min-h-[140px] flex-1 animate-pulse rounded-xl bg-night-800"></div>
-            </div>
-
-            <div data-content hidden class="flex min-h-0 flex-1 flex-col">
-                <div class="shrink-0">
-                    <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                        <span id="weight-now" class="whitespace-nowrap text-5xl font-bold tracking-tighter text-white"></span>
-                        <span id="weight-sub" class="text-lg text-night-400"></span>
-                    </div>
-                    <p id="weight-meta" class="mt-2 font-mono text-base uppercase tracking-wider text-night-500"></p>
-                </div>
-                <div class="relative mt-6 min-h-[150px] flex-1">
-                    <canvas id="weight-chart" aria-label="Seven day rolling average bodyweight" role="img"></canvas>
-                </div>
-            </div>
-
-            <div data-empty hidden class="flex flex-1 items-center justify-center rounded-xl border border-night-800 bg-night-950/40 text-lg text-night-500">
-                No bodyweight readings yet.
-            </div>
-            <div data-error hidden class="rounded-xl border border-amber-500/40 bg-amber-950/30 px-4 py-3 text-base text-amber-300"></div>
-        </div>
-
-        <div id="sec-prs" class="mt-6 shrink-0 border-t border-night-700/70 pt-6">
-            <h3 class="font-mono text-base uppercase tracking-[0.18em] text-accent/90">Personal records</h3>
-
-            <div data-skeleton class="mt-5 grid grid-cols-3 gap-4">
-                <div class="h-28 animate-pulse rounded-xl bg-night-800"></div>
-                <div class="h-28 animate-pulse rounded-xl bg-night-800"></div>
-                <div class="h-28 animate-pulse rounded-xl bg-night-800"></div>
-            </div>
-            <div data-content hidden id="pr-grid" class="mt-5 grid grid-cols-3 gap-4"></div>
-            <div data-empty hidden class="mt-5 text-lg text-night-500">No lifts recorded yet.</div>
-            <div data-error hidden class="mt-5 rounded-xl border border-amber-500/40 bg-amber-950/30 px-4 py-3 text-base text-amber-300"></div>
-        </div>
-    </section>
-
-    <!-- ============================= VOID ============================= -->
-    <section class="card flex min-h-0 flex-col md:col-span-2 lg:col-start-3 lg:row-start-5 lg:col-span-2 lg:row-span-3 rounded-2xl border border-night-700/70 bg-night-900/50 p-7 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_0_40px_rgba(167,139,250,0.18)] lg:p-8">
-        <div class="flex shrink-0 flex-wrap items-baseline justify-between gap-3">
-            <h2 class="text-4xl font-bold tracking-tighter text-white">Void</h2>
-            <span id="diary-count" class="font-mono text-base uppercase tracking-[0.18em] text-accent/90">Public diary logs</span>
-        </div>
-
-        <div id="sec-diary" class="mt-6 flex min-h-0 flex-1 flex-col">
-            <div data-skeleton class="space-y-6">
-                <div class="h-4 w-28 animate-pulse rounded bg-night-800"></div>
-                <div class="h-6 w-1/2 animate-pulse rounded bg-night-800"></div>
-            </div>
-
-            <ol data-content hidden id="diary-list"
-                class="rail min-h-0 flex-1 space-y-1 overflow-y-auto border-l border-night-700/70 pl-7 pr-2"></ol>
-
-            <div data-empty hidden class="flex flex-1 items-center justify-center rounded-xl border border-night-800 bg-night-950/40 text-lg text-night-500">
-                Nothing published yet.
-            </div>
-            <div data-error hidden class="rounded-xl border border-amber-500/40 bg-amber-950/30 px-4 py-3 text-base text-amber-300"></div>
-        </div>
-    </section>
-
+<header class="nav">
+    <div class="nav__inner">
+        <a class="nav__mark" href="index.html" data-page="Professional"><span class="nav__mark-full" data-identity>Randy Ngui</span><span class="nav__mark-short" data-identity-short>Randy</span><span class="nav__dot">.</span></a>
+        <nav class="nav__links" aria-label="Primary">
+            <a class="nav__link" href="index.html"    data-page="Professional" aria-current="page">Professional</a>
+            <a class="nav__link" href="personal.html" data-page="Personal">Personal</a>
+            <a class="nav__link" href="contact.html"  data-page="Contact">Contact</a>
+        </nav>
     </div>
-</main>
+</header>
 
-<!-- ============================ OVERLAY ============================ -->
-<div id="overlay" hidden
-     class="fixed inset-0 z-50 flex items-end justify-center bg-ink/80 p-0 backdrop-blur-md sm:items-center sm:p-6"
-     role="dialog" aria-modal="true" aria-labelledby="overlay-title">
-    <article class="rail relative max-h-[88vh] w-full max-w-3xl overflow-y-auto rounded-t-2xl border border-night-700 bg-night-900/90 p-7 shadow-2xl backdrop-blur-xl sm:rounded-2xl sm:p-10">
-        <button id="overlay-close" type="button" aria-label="Close entry"
-                class="absolute right-5 top-5 rounded-lg border border-night-700 bg-night-900 p-2.5 text-night-400 transition-colors duration-200 hover:border-accent/60 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">
-            <svg viewBox="0 0 20 20" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-                <path d="M5 5l10 10M15 5L5 15"/>
-            </svg>
-        </button>
-
-        <div id="overlay-cover-frame" hidden class="mb-8 overflow-hidden rounded-xl border border-night-700 bg-night-950">
-            <img id="overlay-cover" alt="" class="max-h-80 w-full object-cover" loading="lazy" decoding="async">
-        </div>
-
-        <p id="overlay-date" class="pr-12 font-mono text-base uppercase tracking-[0.18em] text-accent"></p>
-        <h3 id="overlay-title" class="mt-4 text-4xl font-bold leading-tight tracking-tighter text-white"></h3>
-        <div id="overlay-tags" class="mt-5 flex flex-wrap gap-2"></div>
-        <div id="overlay-body" class="mt-8 whitespace-pre-wrap text-lg leading-relaxed text-night-200"></div>
-    </article>
+<div class="curtain" aria-hidden="true">
+    <div class="curtain__sheet"></div>
+    <div class="curtain__label">
+        <span class="curtain__mask"><span class="curtain__name" id="curtain-name">Professional</span></span>
+        <span class="curtain__bar"></span>
+    </div>
 </div>
 
-<script>
-/* ================================================================
-   CONFIG. The anon key is meant to be public: every table is gated
-   by the RLS policies in schema.sql. Never put the service_role
-   key here, it bypasses all of them.
-   ================================================================ */
-
-const SUPABASE_URL      = 'https://blmuzscdxkonhctupsvm.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_RRFckIovUQL9EbHZhpzQoA_ASseYFAH';
-
-/* Fallbacks, used only when the `profile` table is empty. */
-const FALLBACK_NAME    = 'Your Name';
-const FALLBACK_TAGLINE = '';
-
-const DEFAULT_SCORE_MAX = 100;   // used when academics.gpa_max is absent
-const ROLLING_DAYS      = 7;     // window for the bodyweight average
-const CHART_POINTS      = 90;    // most recent N points to plot
-const BLANK             = '-';   // shown wherever a value is missing
-
-/* Palette, kept in sync with the tailwind.config block in <head>. */
-const C = {
-    accent:  '#a78bfa',
-    fuchsia: '#c084fc',
-    muted:   '#9a8fc0',
-    faint:   '#847aa8',
-    line:    'rgba(167,139,250,0.08)',
-    panel:   'rgba(10,7,17,0.96)',
-    border:  '#362f4d',
-};
-
-/* ================================================================ */
-
-const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const CONFIGURED = !SUPABASE_URL.startsWith('YOUR_') && !SUPABASE_ANON_KEY.startsWith('YOUR_');
-const sb = (CONFIGURED && window.supabase)
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-    : null;
-
-/* ---------------- DOM helpers ----------------
-   Every node is built with createElement plus textContent, so database
-   text is never parsed as HTML. No innerHTML anywhere in this file. */
-
-function el(tag, className, text) {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
-    if (text != null) node.textContent = text;
-    return node;
-}
-
-function clear(node) {
-    while (node.firstChild) node.removeChild(node.firstChild);
-}
-
-/* Image URLs come from the database and end up in a src attribute.
-   HTML-escaping does not defuse a URL *scheme*, so the scheme itself
-   has to be checked: anything that is not plain http(s) is dropped
-   rather than rendered. Returns null when the URL is unusable. */
-function safeUrl(value) {
-    if (!value) return null;
-    try {
-        const parsed = new URL(String(value), window.location.href);
-        return (parsed.protocol === 'http:' || parsed.protocol === 'https:') ? parsed.href : null;
-    } catch (err) {
-        return null;
-    }
-}
-
-function setImage(frame, img, url, alt) {
-    const href = safeUrl(url);
-    if (!href) { frame.hidden = true; return false; }
-    img.alt = String(alt || '');
-    img.addEventListener('error', () => { frame.hidden = true; }, { once: true });
-    img.src = href;
-    frame.hidden = false;
-    return true;
-}
-
-function setState(sectionId, state, message) {
-    const root = document.getElementById(sectionId);
-    if (!root) return;
-    ['skeleton', 'content', 'empty', 'error'].forEach((name) => {
-        const node = root.querySelector(':scope > [data-' + name + ']');
-        if (node) node.hidden = (name !== state);
-    });
-    if (state === 'error') {
-        const node = root.querySelector(':scope > [data-error]');
-        if (node) node.textContent = message || 'Could not load this section.';
-    }
-    if (state === 'content') {
-        const node = root.querySelector(':scope > [data-content]');
-        if (node) node.classList.add('fade-in');
-    }
-}
-
-/* ---------------- formatting ---------------- */
-
-/* Date columns arrive as 'YYYY-MM-DD'. Parsing that with new Date()
-   treats it as UTC midnight, which renders as the previous day for
-   anyone west of Greenwich, so build the date explicitly instead. */
-function fmtDay(value) {
-    if (!value) return BLANK;
-    const parts = String(value).slice(0, 10).split('-').map(Number);
-    if (parts.length !== 3 || parts.some(Number.isNaN)) return BLANK;
-    const d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-    return d.toLocaleDateString(undefined, {
-        day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC',
-    });
-}
-
-function fmtStamp(value) {
-    if (!value) return BLANK;
-    const d = new Date(value);
-    if (Number.isNaN(d.getTime())) return BLANK;
-    return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
-}
-
-function fmtKg(n) {
-    const v = Number(n);
-    return Number.isFinite(v) ? v.toFixed(1) + ' kg' : BLANK;
-}
-
-/* Trims trailing zeros: 87.50 becomes "87.5", 87.00 becomes "87". */
-function fmtNum(n, maxDecimals) {
-    const v = Number(n);
-    if (!Number.isFinite(v)) return BLANK;
-    return String(Number(v.toFixed(maxDecimals)));
-}
-
-/* ---------------- fetching ---------------- */
-async function run(query) {
-    try {
-        const { data, error } = await query;
-        if (error) throw new Error(error.message);
-        return { ok: true, rows: data || [] };
-    } catch (err) {
-        return { ok: false, message: (err && err.message) || 'Request failed.' };
-    }
-}
-
-/* ---------------- rolling average ----------------
-   A calendar window, not a window of N rows: each point averages
-   every reading within the preceding ROLLING_DAYS days, so missed
-   days shrink the sample rather than silently stretching the window
-   across a gap. */
-function rollingAverage(rows, windowDays) {
-    const DAY = 86400000;
-    const points = rows
-        .map((r) => {
-            const p = String(r.logged_on).slice(0, 10).split('-').map(Number);
-            return { t: Date.UTC(p[0], p[1] - 1, p[2]), kg: Number(r.weight_kg) };
-        })
-        .filter((p) => Number.isFinite(p.t) && Number.isFinite(p.kg))
-        .sort((a, b) => a.t - b.t);
-
-    const out = [];
-    for (let i = 0; i < points.length; i++) {
-        const cutoff = points[i].t - (windowDays - 1) * DAY;
-        let sum = 0, n = 0;
-        for (let j = i; j >= 0 && points[j].t >= cutoff; j--) {
-            sum += points[j].kg;
-            n++;
-        }
-        out.push({ t: points[i].t, avg: sum / n, n: n });
-    }
-    return out;
-}
-
-/* ---------------- renderers ---------------- */
-
-function renderProfile(result) {
-    const nameNode = document.getElementById('owner-name');
-    const taglineNode = document.getElementById('tagline');
-    const row = (result.ok && result.rows[0]) ? result.rows[0] : null;
-
-    // A missing profile row is not an error worth showing: fall back to
-    // the constants above so the hero always renders something.
-    nameNode.textContent = (row && row.display_name) || FALLBACK_NAME;
-    const tagline = (row && row.tagline) || FALLBACK_TAGLINE;
-    taglineNode.textContent = tagline;
-    taglineNode.hidden = !tagline;
-
-    const frame = document.getElementById('avatar-frame');
-    if (row && row.avatar_url) {
-        setImage(frame, document.getElementById('avatar-img'), row.avatar_url, nameNode.textContent);
-    } else {
-        frame.hidden = true;
-    }
-
-    setState('sec-profile', 'content');
-}
-
-function renderGallery(result) {
-    if (!result.ok || !result.rows.length) return;
-
-    const strip = document.getElementById('gallery-strip');
-    clear(strip);
-    let shown = 0;
-
-    result.rows.forEach((row) => {
-        const href = safeUrl(row.image_url);
-        if (!href) return;   // skip silently rather than leaving a dead tile
-
-        const tile = el('figure', 'tile group relative h-28 w-40 shrink-0 overflow-hidden rounded-xl border border-night-700 bg-night-950 transition-colors duration-300 hover:border-accent/60');
-
-        const img = el('img', 'h-full w-full object-cover');
-        img.alt = String(row.alt || '');
-        img.loading = 'lazy';
-        img.decoding = 'async';
-        img.addEventListener('error', () => tile.remove(), { once: true });
-        img.src = href;
-        tile.appendChild(img);
-
-        if (row.caption) {
-            const cap = el('figcaption', 'pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/95 to-transparent px-3 pb-2.5 pt-10 text-sm font-medium text-white');
-            cap.textContent = row.caption;
-            tile.appendChild(cap);
-        }
-
-        strip.appendChild(tile);
-        shown++;
-    });
-
-    strip.hidden = shown === 0;
-}
-
-function renderStatus(result) {
-    if (!result.ok) {
-        setState('sec-status', 'error', 'System status unavailable.');
-        return;
-    }
-    const latest = result.rows[0];
-    const dot = document.getElementById('status-dot');
-    const ping = document.getElementById('status-ping');
-
-    if (latest) {
-        document.getElementById('status-text').textContent = 'Last log ' + fmtStamp(latest.created_at);
-    } else {
-        document.getElementById('status-text').textContent = 'No public logs';
-        dot.classList.replace('bg-accent', 'bg-night-600');
-        ping.remove();
-    }
-    if (REDUCED && ping && ping.isConnected) ping.remove();
-    setState('sec-status', 'content');
-}
-
-function renderAcademics(result) {
-    if (!result.ok) { setState('sec-academics', 'error', result.message); return; }
-    const row = result.rows[0];
-    if (!row) { setState('sec-academics', 'empty'); return; }
-
-    document.getElementById('degree').textContent = row.degree || BLANK;
-
-    const max = Number(row.gpa_max) > 0 ? Number(row.gpa_max) : DEFAULT_SCORE_MAX;
-    const score = Number(row.gpa);
-    const safe = Number.isFinite(score) ? Math.min(Math.max(score, 0), max) : 0;
-
-    // A max of 100 reads as a percentage; anything else keeps the
-    // "x / y" form, so a 4.0-scale GPA still displays correctly.
-    const isPercent = Math.abs(max - 100) < 0.001;
-
-    document.getElementById('gpa-value').textContent =
-        Number.isFinite(score) ? fmtNum(score, 2) : BLANK;
-    document.getElementById('gpa-unit').textContent =
-        isPercent ? '%' : '/ ' + fmtNum(max, 2);
-    document.getElementById('gpa-label').textContent =
-        isPercent ? 'Score' : 'GPA';
-    document.getElementById('gpa-updated').textContent =
-        row.updated_at ? 'Updated ' + fmtStamp(row.updated_at) : '';
-
-    setState('sec-academics', 'content');
-
-    // r=54 in a 120 viewBox, must match the stroke-dasharray in the SVG.
-    const CIRC = 2 * Math.PI * 54;
-    const ring = document.getElementById('gpa-ring');
-    const offset = CIRC * (1 - safe / max);
-    if (REDUCED) {
-        ring.style.strokeDashoffset = String(offset);
-    } else {
-        requestAnimationFrame(() => { ring.style.strokeDashoffset = String(offset); });
-    }
-}
-
-function renderMilestones(result) {
-    if (!result.ok) { setState('sec-milestones', 'error', result.message); return; }
-    if (!result.rows.length) { setState('sec-milestones', 'empty'); return; }
-
-    const list = document.getElementById('milestone-list');
-    clear(list);
-
-    result.rows.forEach((row) => {
-        const li = el('li', 'flex gap-3.5');
-        li.appendChild(el('span', 'mt-2.5 h-2 w-2 shrink-0 rounded-full bg-accent'));
-        const wrap = el('div', 'min-w-0');
-        wrap.appendChild(el('p', 'text-lg leading-snug text-night-100', row.title || 'Untitled'));
-        wrap.appendChild(el('p', 'mt-1 font-mono text-sm uppercase tracking-wider text-night-500', fmtDay(row.achieved_on)));
-        li.appendChild(wrap);
-        list.appendChild(li);
-    });
-
-    setState('sec-milestones', 'content');
-}
-
-function renderMass(result) {
-    const section = document.getElementById('sec-mass');
-    if (!result.ok || !result.rows.length) { section.hidden = true; return; }
-
-    const latest = result.rows[result.rows.length - 1];
-    const v = Number(latest.weight_kg);
-    if (!Number.isFinite(v)) { section.hidden = true; return; }
-
-    document.getElementById('mass-value').textContent = v.toFixed(1);
-    setState('sec-mass', 'content');
-}
-
-function renderVitals(result) {
-    if (!result.ok) { setState('sec-vitals', 'error', result.message); return; }
-    if (!result.rows.length) { setState('sec-vitals', 'empty'); return; }
-
-    const list = document.getElementById('vitals-list');
-    clear(list);
-
-    result.rows.forEach((row) => {
-        const line = el('div', 'flex items-baseline justify-between gap-3');
-        line.appendChild(el('dt', 'font-mono text-sm uppercase tracking-[0.15em] text-night-500', row.label || BLANK));
-
-        const dd = el('dd', 'min-w-0 text-right');
-        dd.appendChild(el('span', 'text-lg font-semibold text-white', String(row.value == null ? BLANK : row.value)));
-        if (row.unit) {
-            dd.appendChild(el('span', 'ml-1 text-sm font-medium text-night-400', String(row.unit)));
-        }
-        line.appendChild(dd);
-        list.appendChild(line);
-    });
-
-    setState('sec-vitals', 'content');
-}
-
-let weightChart = null;
-
-function renderWeight(result) {
-    if (!result.ok) { setState('sec-weight', 'error', result.message); return; }
-    if (!result.rows.length) { setState('sec-weight', 'empty'); return; }
-
-    const series = rollingAverage(result.rows, ROLLING_DAYS);
-    const view = series.slice(-CHART_POINTS);
-    const latestReading = result.rows[result.rows.length - 1];
-    const latestAvg = series[series.length - 1];
-
-    document.getElementById('weight-now').textContent = fmtKg(latestReading.weight_kg);
-    document.getElementById('weight-sub').textContent =
-        ROLLING_DAYS + '-day avg ' + fmtKg(latestAvg.avg);
-
-    const first = view[0];
-    const delta = latestAvg.avg - first.avg;
-    const days = Math.round((latestAvg.t - first.t) / 86400000);
-    document.getElementById('weight-meta').textContent = days > 0
-        ? (delta >= 0 ? '+' : '-') + Math.abs(delta).toFixed(1) + ' kg over ' + days + ' days'
-        : result.rows.length + ' reading' + (result.rows.length === 1 ? '' : 's');
-
-    setState('sec-weight', 'content');
-
-    const canvas = document.getElementById('weight-chart');
-    const ctx = canvas.getContext('2d');
-    const fill = ctx.createLinearGradient(0, 0, 0, 220);
-    fill.addColorStop(0, 'rgba(167,139,250,0.30)');
-    fill.addColorStop(1, 'rgba(129,140,248,0)');
-
-    if (weightChart) weightChart.destroy();
-    weightChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: view.map((p) => fmtDay(new Date(p.t).toISOString())),
-            datasets: [{
-                data: view.map((p) => Number(p.avg.toFixed(2))),
-                borderColor: C.accent,
-                borderWidth: 3,
-                backgroundColor: fill,
-                fill: true,
-                tension: 0.35,
-                pointRadius: 0,
-                pointHoverRadius: 6,
-                pointHoverBackgroundColor: C.fuchsia,
-                pointHoverBorderColor: '#050505',
-                pointHoverBorderWidth: 2,
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: REDUCED ? false : { duration: 700, easing: 'easeOutQuart' },
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: C.panel,
-                    borderColor: C.border,
-                    borderWidth: 1,
-                    padding: 12,
-                    titleColor: C.muted,
-                    titleFont: { size: 13, weight: '500' },
-                    bodyColor: '#ffffff',
-                    bodyFont: { size: 15, weight: '600' },
-                    displayColors: false,
-                    callbacks: {
-                        label: (item) => {
-                            const p = view[item.dataIndex];
-                            return fmtKg(p.avg) + '  /  ' + p.n + ' reading' + (p.n === 1 ? '' : 's');
-                        },
-                    },
-                },
-            },
-            scales: {
-                x: {
-                    grid: { display: false },
-                    border: { display: false },
-                    ticks: { color: C.faint, font: { size: 12 }, maxRotation: 0, autoSkipPadding: 26 },
-                },
-                y: {
-                    grid: { color: C.line },
-                    border: { display: false },
-                    ticks: { color: C.faint, font: { size: 12 }, maxTicksLimit: 5, callback: (v) => v + ' kg' },
-                },
-            },
-        },
-    });
-}
-
-const LIFTS = [
-    { key: 'squat',    label: 'Squat' },
-    { key: 'bench',    label: 'Bench' },
-    { key: 'deadlift', label: 'Deadlift' },
-];
-
-function renderPRs(result) {
-    if (!result.ok) { setState('sec-prs', 'error', result.message); return; }
-    if (!result.rows.length) { setState('sec-prs', 'empty'); return; }
-
-    // Heaviest load per lift; the more recent one wins a tie.
-    const best = {};
-    result.rows.forEach((row) => {
-        const current = best[row.lift];
-        const heavier = !current || Number(row.weight_kg) > Number(current.weight_kg);
-        const sameButNewer = current
-            && Number(row.weight_kg) === Number(current.weight_kg)
-            && String(row.achieved_on) > String(current.achieved_on);
-        if (heavier || sameButNewer) best[row.lift] = row;
-    });
-
-    const grid = document.getElementById('pr-grid');
-    clear(grid);
-
-    LIFTS.forEach((lift) => {
-        const row = best[lift.key];
-        const filled = Boolean(row);
-        const card = el('div', 'min-w-0 rounded-xl border p-4 transition-colors duration-300 '
-            + (filled ? 'border-accent/25 bg-accent/[0.06]' : 'border-night-800 bg-night-950/60'));
-        card.appendChild(el('p', 'font-mono text-sm uppercase tracking-[0.18em] '
-            + (filled ? 'text-accent/90' : 'text-night-500'), lift.label));
-
-        if (!row) {
-            card.appendChild(el('p', 'mt-3 text-lg font-medium text-night-600', 'Not recorded'));
-        } else {
-            // The unit stays welded to the number: "105.0 kg" breaking
-            // across two lines was the ugliest thing on the card.
-            const value = el('p', 'mt-2.5 whitespace-nowrap');
-            const num = Number(row.weight_kg);
-            value.appendChild(el('span', 'text-3xl font-bold tracking-tighter text-white',
-                Number.isFinite(num) ? num.toFixed(1) : BLANK));
-            value.appendChild(el('span', 'ml-1 text-base font-medium text-night-400', 'kg'));
-            const reps = Number(row.reps);
-            if (Number.isFinite(reps) && reps > 1) {
-                value.appendChild(el('span', 'ml-2 font-mono text-base text-accent', 'x' + reps));
-            }
-            card.appendChild(value);
-            card.appendChild(el('p', 'mt-1 truncate font-mono text-sm uppercase tracking-wider text-night-500', fmtDay(row.achieved_on)));
-        }
-        grid.appendChild(card);
-    });
-
-    setState('sec-prs', 'content');
-}
-
-function renderDiary(result) {
-    const count = document.getElementById('diary-count');
-
-    if (!result.ok) { setState('sec-diary', 'error', result.message); return; }
-    if (!result.rows.length) { setState('sec-diary', 'empty'); return; }
-
-    count.textContent = result.rows.length + (result.rows.length === 1 ? ' entry' : ' entries');
-
-    const list = document.getElementById('diary-list');
-    clear(list);
-
-    result.rows.forEach((row) => {
-        const li = el('li', 'relative');
-        li.appendChild(el('span', 'absolute -left-[32px] top-[26px] h-2.5 w-2.5 rounded-full border-2 border-ink bg-night-600 transition-colors duration-300'));
-
-        const button = el('button', 'group -ml-2 block w-full rounded-xl px-3 py-4 text-left transition-colors duration-300 hover:bg-accent/[0.07] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent');
-        button.type = 'button';
-
-        const layout = el('div', 'flex gap-4');
-        const text = el('div', 'min-w-0 flex-1');
-
-        text.appendChild(el('p', 'font-mono text-sm uppercase tracking-[0.18em] text-night-500', fmtStamp(row.created_at)));
-        text.appendChild(el('h4', 'mt-2 text-2xl font-semibold leading-snug tracking-tight text-white transition-colors duration-300 group-hover:text-accent', row.title || 'Untitled'));
-
-        const body = String(row.body || '');
-        if (body.trim()) {
-            const excerpt = body.length > 150 ? body.slice(0, 150).trimEnd() + '...' : body;
-            text.appendChild(el('p', 'mt-2 line-clamp-2 text-base leading-relaxed text-night-400', excerpt));
-        }
-
-        const tags = Array.isArray(row.tags) ? row.tags : [];
-        if (tags.length) {
-            const wrap = el('div', 'mt-3 flex flex-wrap gap-2');
-            tags.forEach((tag) => {
-                wrap.appendChild(el('span', 'rounded-md border border-accent/25 bg-accent/10 px-2 py-0.5 font-mono text-sm uppercase tracking-wider text-accent', String(tag)));
-            });
-            text.appendChild(wrap);
-        }
-        layout.appendChild(text);
-
-        const cover = safeUrl(row.cover_url);
-        if (cover) {
-            const frame = el('div', 'tile hidden h-24 w-32 shrink-0 overflow-hidden rounded-lg border border-night-700 bg-night-950 sm:block');
-            const img = el('img', 'h-full w-full object-cover');
-            img.alt = '';
-            img.loading = 'lazy';
-            img.decoding = 'async';
-            img.addEventListener('error', () => frame.remove(), { once: true });
-            img.src = cover;
-            frame.appendChild(img);
-            layout.appendChild(frame);
-        }
-
-        button.appendChild(layout);
-
-        const dot = li.firstChild;
-        button.addEventListener('mouseenter', () => dot.classList.replace('bg-night-600', 'bg-accent'));
-        button.addEventListener('mouseleave', () => dot.classList.replace('bg-accent', 'bg-night-600'));
-        button.addEventListener('click', () => openEntry(row));
-
-        li.appendChild(button);
-        list.appendChild(li);
-    });
-
-    setState('sec-diary', 'content');
-}
-
-/* ---------------- overlay ---------------- */
-
-const overlay = document.getElementById('overlay');
-const overlayClose = document.getElementById('overlay-close');
-let lastFocused = null;
-
-function openEntry(row) {
-    document.getElementById('overlay-date').textContent = fmtStamp(row.created_at);
-    document.getElementById('overlay-title').textContent = row.title || 'Untitled';
-    document.getElementById('overlay-body').textContent = String(row.body || '');
-
-    setImage(
-        document.getElementById('overlay-cover-frame'),
-        document.getElementById('overlay-cover'),
-        row.cover_url,
-        ''
-    );
-
-    const tagWrap = document.getElementById('overlay-tags');
-    clear(tagWrap);
-    const tags = Array.isArray(row.tags) ? row.tags : [];
-    tags.forEach((tag) => {
-        tagWrap.appendChild(el('span', 'rounded-md border border-accent/30 bg-accent/10 px-2.5 py-1 font-mono text-sm uppercase tracking-wider text-accent', String(tag)));
-    });
-    tagWrap.hidden = tags.length === 0;
-
-    lastFocused = document.activeElement;
-    overlay.hidden = false;
-    document.body.style.overflow = 'hidden';
-    overlay.querySelector('article').scrollTop = 0;
-    overlayClose.focus();
-}
-
-function closeEntry() {
-    if (overlay.hidden) return;
-    overlay.hidden = true;
-    document.body.style.overflow = '';
-    if (lastFocused && lastFocused.isConnected) lastFocused.focus();
-    lastFocused = null;
-}
-
-overlayClose.addEventListener('click', closeEntry);
-overlay.addEventListener('mousedown', (e) => { if (e.target === overlay) closeEntry(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeEntry(); });
-
-/* ---------------- boot ---------------- */
-
-const SECTIONS = ['sec-profile', 'sec-status', 'sec-academics', 'sec-milestones',
-                  'sec-mass', 'sec-vitals', 'sec-weight', 'sec-prs', 'sec-diary'];
-
-async function load() {
-    if (!sb) {
-        const reason = window.supabase
-            ? 'Supabase is not configured. Set SUPABASE_URL and SUPABASE_ANON_KEY in this file.'
-            : 'supabase-js failed to load from the CDN.';
-        document.getElementById('owner-name').textContent = FALLBACK_NAME;
-        SECTIONS.forEach((id) => setState(id, 'error', reason));
-        return;
-    }
-
-    // All eight requests are in flight before the first one resolves.
-    const [profile, gallery, academics, milestones, vitals, body, lifts, diary] = await Promise.all([
-        run(sb.from('profile').select('display_name, tagline, avatar_url')
-              .order('updated_at', { ascending: false }).limit(1)),
-        run(sb.from('gallery').select('image_url, alt, caption')
-              .eq('published', true).order('sort_order', { ascending: true })),
-        run(sb.from('academics').select('degree, gpa, gpa_max, updated_at')
-              .order('updated_at', { ascending: false }).limit(1)),
-        run(sb.from('milestones').select('title, achieved_on')
-              .order('achieved_on', { ascending: false })),
-        run(sb.from('vitals').select('label, value, unit')
-              .eq('published', true).order('sort_order', { ascending: true })),
-        run(sb.from('body_log').select('logged_on, weight_kg')
-              .order('logged_on', { ascending: true })),
-        run(sb.from('lift_prs').select('lift, weight_kg, reps, achieved_on')
-              .order('weight_kg', { ascending: false })),
-        run(sb.from('diary_logs').select('id, title, body, tags, cover_url, created_at')
-              .eq('is_public', true).order('created_at', { ascending: false })),
-    ]);
-
-    // Each renderer owns its own section: one failure leaves the rest intact.
-    renderProfile(profile);
-    renderGallery(gallery);
-    renderStatus(diary);
-    renderAcademics(academics);
-    renderMilestones(milestones);
-    renderMass(body);
-    renderVitals(vitals);
-    renderWeight(body);
-    renderPRs(lifts);
-    renderDiary(diary);
-}
-
-load();
-</script>
+<div class="page">
+<main>
+
+    <!-- ============================ HERO ============================ -->
+    <section class="wrap hero" id="sec-hero">
+        <div data-skeleton class="skel-stack">
+            <div class="skel skel-line skel-line--sm"></div>
+            <div class="skel skel-line skel-line--lg" style="height:4.5rem"></div>
+            <div class="skel skel-line" style="width:35%"></div>
+        </div>
+
+        <div data-content hidden class="hero__grid">
+            <div class="hero__main">
+                <p class="hero__eyebrow">
+                    <span class="dot" id="hero-dot"></span>
+                    <span class="label label--bright" id="hero-status"></span>
+                    <span class="label" id="hero-location" hidden></span>
+                </p>
+
+                <h1 class="display hero__name" id="hero-name">Randy Ngui</h1>
+                <p class="hero__role" id="hero-role" hidden></p>
+                <p class="lede" id="hero-intro" hidden></p>
+
+                <div class="hero__actions">
+                    <a class="btn" href="#work">Selected work <span class="btn__arrow" aria-hidden="true">&rarr;</span></a>
+                    <a class="btn" href="contact.html" data-page="Contact">Get in touch</a>
+                    <a class="btn" id="hero-resume" hidden rel="noopener">Résumé</a>
+                </div>
+            </div>
+
+            <!-- Portrait and the social row read as one block: the
+                 buttons sit directly under the photo and share its
+                 width, so the column has a single edge down both sides. -->
+            <aside class="hero__aside">
+                <figure class="hero__portrait" id="hero-portrait" hidden>
+                    <img id="hero-photo" alt="" loading="eager" decoding="async">
+                </figure>
+
+                <div id="sec-socials">
+                    <div data-skeleton class="socials">
+                        <span class="skel social social--skel"></span>
+                        <span class="skel social social--skel"></span>
+                        <span class="skel social social--skel"></span>
+                    </div>
+                    <div data-content hidden class="socials" id="social-row"></div>
+                    <div data-empty hidden></div>
+                    <div data-error hidden></div>
+                </div>
+            </aside>
+        </div>
+
+        <div data-error hidden class="state-error"></div>
+    </section>
+
+    <!-- ============================ STATS ============================ -->
+    <section class="wrap" id="sec-stats">
+        <div data-skeleton class="skel skel-line" style="height:5rem"></div>
+        <div data-content hidden class="stats" id="stat-strip"></div>
+        <div data-empty hidden></div>
+        <div data-error hidden></div>
+    </section>
+
+    <!-- ============================ WORK ============================ -->
+    <section class="wrap section" id="work">
+        <div class="section-head">
+            <div class="section-head__top"><p class="label label--accent" data-section-label="Work">01 / Work</p></div>
+            <h2 class="h2">Things I have built</h2>
+            <p class="section-head__note">Coursework, side projects and the odd thing soldered together at 2am. Each one links out to a repository or a writeup.</p>
+        </div>
+
+        <div id="sec-projects">
+            <div data-skeleton class="projects">
+                <div class="project"><div class="skel skel-block" style="width:100%"></div></div>
+                <div class="project"><div class="skel skel-block" style="width:100%"></div></div>
+            </div>
+            <div data-content hidden class="projects" id="project-grid"></div>
+            <div data-empty hidden class="state-empty">No projects published yet.</div>
+            <div data-error hidden class="state-error"></div>
+        </div>
+    </section>
+
+    <!-- =========================== SKILLS =========================== -->
+    <section class="wrap section" id="toolkit">
+        <div class="section-head">
+            <div class="section-head__top"><p class="label label--accent" data-section-label="Toolkit">02 / Toolkit</p></div>
+            <h2 class="h2">What I work with</h2>
+        </div>
+
+        <div id="sec-skills">
+            <div data-skeleton class="skel skel-block"></div>
+            <div data-content hidden class="skills" id="skill-grid"></div>
+            <div data-empty hidden class="state-empty">Nothing listed yet.</div>
+            <div data-error hidden class="state-error"></div>
+        </div>
+    </section>
+
+    <!-- ========================= EXPERIENCE ========================= -->
+    <section class="wrap section" id="experience">
+        <div class="section-head">
+            <div class="section-head__top"><p class="label label--accent" data-section-label="Experience">03 / Experience</p></div>
+            <h2 class="h2">Where I have been</h2>
+        </div>
+
+        <div id="sec-experience">
+            <div data-skeleton class="skel-stack">
+                <div class="skel skel-line"></div>
+                <div class="skel skel-line" style="width:70%"></div>
+                <div class="skel skel-line" style="width:85%"></div>
+            </div>
+            <div data-content hidden class="entries" id="experience-list"></div>
+            <div data-empty hidden class="state-empty">Nothing recorded yet.</div>
+            <div data-error hidden class="state-error"></div>
+        </div>
+    </section>
+
+    <!-- ========================== EDUCATION ========================== -->
+    <section class="wrap section" id="education">
+        <div class="section-head">
+            <div class="section-head__top"><p class="label label--accent" data-section-label="Education">04 / Education</p></div>
+            <h2 class="h2">Studying</h2>
+        </div>
+
+        <div class="grid-split education__head" id="education-head">
+            <!-- The running score sits beside the history rather than
+                 inside it: one is a number, the other is a list. -->
+            <div class="panel" id="sec-academics">
+                <div data-skeleton class="skel-stack">
+                    <div class="skel skel-line skel-line--sm"></div>
+                    <div class="skel skel-line skel-line--lg"></div>
+                </div>
+
+                <div data-content hidden class="score">
+                    <p class="label">Current standing</p>
+                    <div class="score__row">
+                        <span>
+                            <span class="score__value num" id="score-value"></span><span class="score__unit" id="score-unit"></span>
+                        </span>
+                        <span class="label" id="score-updated"></span>
+                    </div>
+                    <div class="score__track"><span class="score__fill" id="score-fill"></span></div>
+                    <p class="prose score__degree" id="score-degree"></p>
+                </div>
+
+                <div data-empty hidden class="state-empty">No score recorded.</div>
+                <div data-error hidden class="state-error"></div>
+            </div>
+
+            <div class="panel--bare" id="sec-milestones">
+                <div data-skeleton class="skel-stack">
+                    <div class="skel skel-line"></div>
+                    <div class="skel skel-line" style="width:60%"></div>
+                </div>
+                <div data-content hidden>
+                    <p class="label subsection__label">Recognition</p>
+                    <ul class="bullets" id="milestone-list"></ul>
+                </div>
+                <div data-empty hidden class="state-empty">Nothing logged yet.</div>
+                <div data-error hidden class="state-error"></div>
+            </div>
+        </div>
+
+        <div id="sec-education">
+            <div data-skeleton class="skel-stack">
+                <div class="skel skel-line"></div>
+                <div class="skel skel-line" style="width:70%"></div>
+            </div>
+            <div data-content hidden class="entries" id="education-list"></div>
+            <div data-empty hidden class="state-empty">No institutions listed yet.</div>
+            <div data-error hidden class="state-error"></div>
+        </div>
+    </section>
+
+    <!-- ============================= CTA ============================= -->
+    <section class="wrap outro">
+        <hr class="rule outro__rule">
+        <h2 class="h2 outro__title">Got something you want built?</h2>
+        <div class="hero__actions">
+            <a class="btn btn--solid" href="contact.html" data-page="Contact">
+                Contact <span class="btn__arrow" aria-hidden="true">&rarr;</span>
+            </a>
+            <a class="btn" href="personal.html" data-page="Personal">See the personal side</a>
+        </div>
+    </section>
+
+</main>
+
+<footer class="foot">
+    <div class="wrap foot__inner">
+        <p class="label">&copy; <span data-year></span> <span data-identity>Randy Ngui</span></p>
+        <div class="foot__links">
+            <a class="nav__link" href="index.html"    data-page="Professional">Professional</a>
+            <a class="nav__link" href="personal.html" data-page="Personal">Personal</a>
+            <a class="nav__link" href="contact.html"  data-page="Contact">Contact</a>
+        </div>
+    </div>
+</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/core.js"></script>
+<script src="assets/professional.js"></script>
 </body>
 </html>

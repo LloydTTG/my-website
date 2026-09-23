@@ -1,0 +1,955 @@
+/* ============================================================
+   Randy Ngui - shared stylesheet
+
+   One file for all three pages. Hand-rolled rather than a utility
+   framework so the markup stays readable and the page paints
+   without waiting on a CDN round-trip.
+   ============================================================ */
+
+:root {
+    color-scheme: dark;
+
+    --bg:          #0a0a0c;
+    --surface:     #111014;
+    --surface-2:   #16151c;
+    --line:        #242231;
+    --line-soft:   #1a1922;
+    --text:        #e9e7ef;
+    --muted:       #9a95a9;
+    --faint:       #6b6779;
+    --accent:      #a78bfa;
+    --accent-deep: #8b5cf6;
+    --accent-dim:  rgba(167, 139, 250, 0.11);
+    --amber:       #e0ad63;
+
+    --sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --serif: "Newsreader", Georgia, "Times New Roman", serif;
+    --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+    --maxw: 1120px;
+    --pad:  clamp(1.25rem, 5vw, 3.25rem);
+    --nav-h: 64px;
+
+    /* Every section shares one vertical rhythm, so the page has a
+       steady beat instead of arbitrary gaps. */
+    --gap-section: clamp(4.5rem, 11vw, 8.5rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    padding-top: var(--nav-h);
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+}
+
+[hidden] { display: none !important; }
+
+img { max-width: 100%; display: block; }
+
+a { color: inherit; }
+
+::selection { background: rgba(167, 139, 250, 0.3); }
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+}
+
+/* ---------------- type ---------------- */
+
+h1, h2, h3, h4 {
+    font-family: var(--serif);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    margin: 0;
+    color: #fff;
+}
+
+.display {
+    font-size: clamp(2.9rem, 8.5vw, 5.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+}
+
+.h2 { font-size: clamp(1.9rem, 4.2vw, 2.85rem); }
+.h3 { font-size: clamp(1.25rem, 2.2vw, 1.5rem); line-height: 1.2; }
+
+/* Small mono labels carry the structure. They are the only
+   uppercase text on the site. */
+.label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0;
+}
+.label--accent { color: var(--accent); }
+.label--bright { color: var(--muted); }
+
+.lede {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 46ch;
+    margin: 0;
+}
+
+.prose { color: var(--muted); margin: 0; max-width: 62ch; }
+.prose + .prose { margin-top: 1rem; }
+
+.num { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+
+/* ---------------- layout ---------------- */
+
+.wrap {
+    width: 100%;
+    max-width: var(--maxw);
+    margin-inline: auto;
+    padding-inline: var(--pad);
+}
+
+.section { padding-block: var(--gap-section); }
+.section--tight { padding-block: clamp(3rem, 7vw, 5rem); }
+
+/* Section heading: eyebrow beside a hairline that runs to the
+   edge, title underneath. Same shape on every section. */
+.section-head { margin-bottom: clamp(2.25rem, 5vw, 3.5rem); }
+
+.section-head__top {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+.section-head__top::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+}
+
+/* Pushed past the rule with `order`, since the rule is a pseudo-
+   element and cannot be moved between two real children. */
+.section-head__trail { order: 1; }
+
+.section-head__note { margin-top: 1.25rem; color: var(--muted); max-width: 54ch; }
+
+.rule { border: 0; border-top: 1px solid var(--line); margin: 0; }
+
+/* A block inside a section that shares its heading. */
+.subsection { margin-top: clamp(2.5rem, 6vw, 4rem); }
+.subsection__label { margin-bottom: 1.25rem; }
+
+/* A panel with no chrome: used where the grid, not a border, does
+   the separating. */
+.panel--bare { border: 0; background: transparent; padding: 0; }
+
+/* ---------------- closing call to action ---------------- */
+
+.outro { padding-block: clamp(3rem, 7vw, 5rem) clamp(4rem, 9vw, 7rem); }
+.outro__rule { margin-bottom: clamp(2.5rem, 6vw, 4rem); }
+.outro__title { max-width: 18ch; }
+.outro__sub { margin-bottom: 0.9rem; }
+
+.grid-split { display: grid; gap: clamp(2rem, 5vw, 3.5rem); }
+@media (min-width: 860px) { .grid-split { grid-template-columns: 1fr 1fr; } }
+
+.education__head { margin-bottom: clamp(2rem, 5vw, 3.5rem); }
+
+.stack { display: grid; gap: clamp(2rem, 5vw, 3rem); }
+
+/* ---------------- nav ---------------- */
+
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    background: rgba(10, 10, 12, 0.94);
+    border-bottom: 1px solid var(--line-soft);
+}
+
+.nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    max-width: var(--maxw);
+    margin-inline: auto;
+    padding-inline: var(--pad);
+}
+
+/* The wordmark is whatever display_name says, which can be a good
+   deal longer than "Randy Ngui". It is the only part of the bar
+   allowed to shrink, and it truncates rather than shoving the links
+   off the right edge. */
+.nav__mark {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+    color: #fff;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.nav__mark .nav__dot { color: var(--accent); }
+
+/* Below the breakpoint the first name stands in for the whole thing,
+   which fits where an ellipsis would only look broken. */
+.nav__mark-short { display: none; }
+
+.nav__links { display: flex; align-items: center; flex: none; }
+
+.nav__link {
+    position: relative;
+    padding: 0.4rem 0.15rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+}
+.nav__link + .nav__link { margin-left: clamp(0.85rem, 2.5vw, 1.5rem); }
+.nav__link:hover { color: var(--text); }
+
+/* The current page keeps a short accent underline. A filled pill
+   would read as a button. */
+.nav__link[aria-current="page"] { color: #fff; }
+.nav__link[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: var(--accent);
+}
+
+/* Three uppercase mono links plus a wordmark stop fitting somewhere
+   around 400px, so both shrink rather than wrapping onto two rows. */
+@media (max-width: 560px) {
+    :root { --nav-h: 56px; }
+    .nav__mark { font-size: 1rem; }
+    .nav__mark-full { display: none; }
+    .nav__mark-short { display: inline; }
+    .nav__link { font-size: 0.62rem; letter-spacing: 0.1em; }
+    .nav__link + .nav__link { margin-left: 0.75rem; }
+}
+
+/* ---------------- links & buttons ---------------- */
+
+.link {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    transition: text-decoration-color 0.2s ease, color 0.2s ease;
+}
+.link:hover { color: #fff; text-decoration-color: var(--accent); }
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.25rem;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+.btn:hover { border-color: var(--accent); color: #fff; background: var(--accent-dim); }
+
+.btn--solid { background: var(--text); border-color: var(--text); color: var(--bg); }
+.btn--solid:hover { background: #fff; border-color: #fff; color: var(--bg); }
+
+.btn__arrow { transition: transform 0.2s ease; }
+.btn:hover .btn__arrow { transform: translateX(3px); }
+
+/* ---------------- surfaces ---------------- */
+
+/* Flat panels: no shadow, no blur, no lift on hover. Only the
+   hairline and the background shift, which is enough. */
+.panel {
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--surface);
+    padding: clamp(1.4rem, 3vw, 2rem);
+}
+.panel--quiet { background: transparent; }
+
+a.panel, .panel--hover { transition: border-color 0.22s ease, background 0.22s ease; }
+a.panel:hover, .panel--hover:hover { border-color: #3a3550; background: var(--surface-2); }
+
+/* ---------------- hero ---------------- */
+
+.hero { padding-block: clamp(3.5rem, 11vw, 7rem) clamp(3rem, 7vw, 4.5rem); }
+
+.hero__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: clamp(1.5rem, 4vw, 2.25rem);
+    flex-wrap: wrap;
+}
+
+.hero__name { margin-bottom: 1.5rem; }
+.hero__name em { font-style: italic; color: var(--accent); }
+
+.hero__role {
+    font-family: var(--serif);
+    font-size: clamp(1.3rem, 3vw, 1.9rem);
+    font-style: italic;
+    color: var(--muted);
+    margin: 0 0 1.5rem;
+    line-height: 1.3;
+}
+
+/* Text left, portrait right. The aside is sized by content so the
+   text column takes whatever is left over rather than both halves
+   splitting the row evenly and stranding the photo mid-page. */
+.hero__grid { display: grid; gap: clamp(2.5rem, 6vw, 4.5rem); align-items: start; }
+
+/* Stacked by default: the photo follows the name instead of leading
+   it, capped so it does not become a full-bleed billboard. The wide
+   rule has to come second or it loses on source order. */
+.hero__aside { width: min(260px, 70%); }
+
+@media (min-width: 900px) {
+    .hero__grid { grid-template-columns: minmax(0, 1fr) auto; }
+    .hero__aside { width: clamp(250px, 25vw, 330px); }
+}
+
+.hero__portrait {
+    margin: 0;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+    background: var(--surface);
+}
+.hero__portrait img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------------- social row ---------------- */
+
+/* One segmented bar under the photo, sharing its hairlines the way
+   the project and record grids do. Equal columns mean it lands flush
+   with both edges of the photo at any number of links, instead of
+   trailing off short on the right or wrapping a lone button onto a
+   second row. */
+.socials {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    margin-top: 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.social {
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-left: 1px solid var(--line);
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+.social:first-child { border-left: 0; }
+.social:hover { color: #fff; background: var(--accent-dim); }
+.social svg { width: 19px; height: 19px; fill: currentColor; display: block; }
+
+/* The focus ring is inset so it is not clipped by the bar's overflow. */
+.social:focus-visible { outline-offset: -4px; }
+
+.social--skel { background: var(--surface-2); }
+
+.hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: clamp(2rem, 5vw, 2.75rem);
+}
+
+/* A live dot, but a steady one. No ping ring. */
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+.dot--idle { background: var(--faint); }
+
+/* ---------------- stat strip ---------------- */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    border-top: 1px solid var(--line);
+}
+
+.stat {
+    padding: 1.5rem 1.25rem 0 0;
+    border-right: 1px solid var(--line);
+}
+.stat:last-child { border-right: 0; }
+
+.stat__value {
+    font-family: var(--serif);
+    font-size: clamp(2.1rem, 4.5vw, 2.9rem);
+    line-height: 1;
+    color: #fff;
+}
+.stat__unit { font-family: var(--sans); font-size: 0.95rem; color: var(--faint); margin-left: 0.3rem; letter-spacing: 0; }
+.stat__label { margin-top: 0.65rem; }
+
+/* ---------------- project cards ---------------- */
+
+.projects {
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+}
+@media (min-width: 760px) { .projects { grid-template-columns: 1fr 1fr; } }
+
+/* Cards butt together and share hairlines, so the grid reads as one
+   object rather than a tray of floating tiles. */
+.project {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    padding: clamp(1.4rem, 3vw, 1.9rem);
+    text-decoration: none;
+    transition: background 0.22s ease;
+}
+.project:hover { background: var(--surface-2); }
+
+.project__cover {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    margin-bottom: 1.4rem;
+    background: var(--bg);
+}
+.project__cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+.project:hover .project__cover img { transform: scale(1.03); }
+
+.project__meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.85rem;
+}
+
+.project__title { font-size: 1.45rem; margin-bottom: 0.6rem; transition: color 0.2s ease; }
+.project:hover .project__title { color: var(--accent); }
+
+.project__summary { color: var(--muted); font-size: 0.98rem; margin: 0 0 1.4rem; flex: 1; }
+
+.project__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: auto;
+}
+
+.project__go { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
+.project:hover .project__go { color: var(--accent); }
+
+/* ---------------- tags ---------------- */
+
+.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tags--gap { margin-top: 1rem; }
+
+.tag {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 0.2rem 0.5rem;
+    white-space: nowrap;
+}
+.tag--accent { color: var(--accent); border-color: rgba(167, 139, 250, 0.3); }
+
+/* ---------------- entry rows (experience / education) ---------------- */
+
+.entries { border-top: 1px solid var(--line); }
+
+.entry {
+    display: grid;
+    gap: 0.5rem 2.5rem;
+    padding-block: clamp(1.75rem, 4vw, 2.5rem);
+    border-bottom: 1px solid var(--line);
+}
+@media (min-width: 760px) { .entry { grid-template-columns: 190px 1fr; } }
+
+.entry__when { padding-top: 0.4rem; }
+.entry__kind { margin-top: 0.4rem; }
+
+.entry__title { font-size: 1.35rem; margin-bottom: 0.35rem; }
+
+.entry__org { color: var(--accent); font-size: 0.95rem; margin: 0 0 0.9rem; }
+.entry__org .sep { color: var(--faint); margin-inline: 0.5rem; }
+
+.entry__body { color: var(--muted); margin: 0; max-width: 62ch; }
+
+.bullets { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: 0.55rem; }
+.bullets li { position: relative; padding-left: 1.4rem; color: var(--muted); font-size: 0.98rem; }
+.bullets__when { display: block; margin-top: 0.3rem; }
+.bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.78em;
+    width: 8px;
+    height: 1px;
+    background: var(--accent);
+}
+
+/* ---------------- skill groups ---------------- */
+
+.skills {
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border-block: 1px solid var(--line);
+}
+@media (min-width: 620px) { .skills { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 980px) { .skills { grid-template-columns: repeat(4, 1fr); } }
+
+.skill { background: var(--bg); padding: clamp(1.4rem, 3vw, 1.9rem) clamp(1.1rem, 2.5vw, 1.5rem); }
+.skill__name { font-size: 1.15rem; margin-bottom: 1rem; }
+.skill__blurb { color: var(--muted); font-size: 0.9rem; margin: -0.4rem 0 1rem; }
+.skill__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; font-size: 0.93rem; color: var(--muted); }
+
+/* ---------------- score bar ---------------- */
+
+.score { display: grid; gap: 0.9rem; }
+
+.score__row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.score__value { font-family: var(--serif); font-size: clamp(2.4rem, 5vw, 3.25rem); line-height: 1; color: #fff; }
+.score__unit { font-family: var(--sans); font-size: 1rem; color: var(--faint); margin-left: 0.25rem; }
+.score__degree { font-size: 0.95rem; }
+
+.score__track { height: 2px; background: var(--line); position: relative; overflow: hidden; }
+.score__fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0;
+    background: var(--accent);
+    transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------------- record cards ---------------- */
+
+.records {
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    overflow: hidden;
+}
+
+.record { background: var(--surface); padding: 1.35rem; }
+.record--empty { background: var(--bg); }
+
+.record__value { font-family: var(--serif); font-size: 2.1rem; line-height: 1; color: #fff; white-space: nowrap; margin-top: 0.6rem; }
+.record__unit { font-family: var(--sans); font-size: 0.9rem; color: var(--faint); margin-left: 0.25rem; }
+.record__reps { font-family: var(--mono); font-size: 0.85rem; color: var(--accent); margin-left: 0.55rem; }
+.record__when { margin-top: 0.5rem; }
+
+/* ---------------- definition list ---------------- */
+
+.specs { margin: 0; }
+
+.specs__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.85rem;
+    border-bottom: 1px solid var(--line-soft);
+}
+.specs__row:last-child { border-bottom: 0; }
+
+.specs dt { margin: 0; }
+.specs dd { margin: 0; text-align: right; color: #fff; font-weight: 500; }
+.specs dd .unit { color: var(--faint); font-weight: 400; margin-left: 0.25rem; font-size: 0.9em; }
+
+/* ---------------- chart ---------------- */
+
+.chart { position: relative; height: clamp(180px, 28vw, 250px); margin-top: 1.75rem; }
+
+.readout { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.35rem 1.1rem; }
+.readout__value { font-family: var(--serif); font-size: clamp(2.6rem, 6vw, 3.6rem); line-height: 1; color: #fff; }
+.readout__unit { font-family: var(--sans); font-size: 1.1rem; color: var(--faint); }
+.readout__aside { color: var(--muted); font-size: 0.98rem; }
+.weight-meta { margin-top: 0.75rem; }
+
+/* ---------------- gallery ---------------- */
+
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+
+.shot {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--surface);
+    aspect-ratio: 4 / 3;
+}
+.shot img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+.shot:hover img { transform: scale(1.04); }
+
+.shot figcaption {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 2.5rem 0.9rem 0.75rem;
+    font-size: 0.85rem;
+    color: #fff;
+    background: linear-gradient(to top, rgba(6, 6, 8, 0.92), transparent);
+    pointer-events: none;
+}
+
+/* ---------------- journal ---------------- */
+
+.journal { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.journal__item { border-bottom: 1px solid var(--line); }
+
+.journal__button {
+    display: grid;
+    gap: 0.35rem 2.5rem;
+    width: 100%;
+    padding: clamp(1.5rem, 3.5vw, 2rem) 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+@media (min-width: 760px) { .journal__button { grid-template-columns: 190px 1fr auto; align-items: start; } }
+
+.journal__date { padding-top: 0.4rem; }
+
+.journal__title { font-size: clamp(1.4rem, 3vw, 1.75rem); margin-bottom: 0.6rem; transition: color 0.2s ease; }
+.journal__button:hover .journal__title { color: var(--accent); }
+
+.journal__excerpt {
+    color: var(--muted);
+    font-size: 0.98rem;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.journal__thumb {
+    display: none;
+    width: 128px;
+    height: 84px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--surface);
+}
+@media (min-width: 900px) { .journal__thumb { display: block; } }
+.journal__thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------------- entry overlay ---------------- */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(6, 6, 8, 0.9);
+    padding: 0;
+}
+@media (min-width: 640px) { .overlay { align-items: center; padding: 1.5rem; } }
+
+.overlay__sheet {
+    position: relative;
+    width: 100%;
+    max-width: 44rem;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px 4px 0 0;
+    padding: clamp(1.75rem, 5vw, 3rem);
+}
+@media (min-width: 640px) { .overlay__sheet { border-radius: 4px; } }
+
+.overlay__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--bg);
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+.overlay__close:hover { color: #fff; border-color: var(--accent); }
+
+.overlay__cover {
+    margin: 0 0 1.75rem;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    max-height: 20rem;
+}
+.overlay__cover img { width: 100%; height: 100%; object-fit: cover; }
+
+.overlay__title { font-size: clamp(1.9rem, 5vw, 2.6rem); margin: 0.9rem 0 0; padding-right: 2.5rem; }
+.overlay__body { margin-top: 1.75rem; white-space: pre-wrap; color: var(--muted); font-size: 1.05rem; }
+
+/* ---------------- contact ---------------- */
+
+.mailto {
+    display: inline-block;
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 5.5vw, 3.2rem);
+    line-height: 1.15;
+    color: #fff;
+    text-decoration: none;
+    word-break: break-word;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.15em;
+    transition: border-color 0.25s ease, color 0.25s ease;
+}
+.mailto:hover { color: var(--accent); border-color: var(--accent); }
+
+.channels { border-top: 1px solid var(--line); }
+
+.channel {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 1.35rem;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+    transition: padding-left 0.22s ease;
+}
+.channel:hover { padding-left: 0.6rem; }
+.channel__name { font-size: 1.15rem; color: #fff; }
+.channel__handle { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; text-align: right; word-break: break-word; }
+.channel:hover .channel__handle { color: var(--accent); }
+
+/* ---------------- footer ---------------- */
+
+.foot { border-top: 1px solid var(--line); padding-block: clamp(2.5rem, 6vw, 4rem); }
+
+.foot__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+}
+
+.foot__links { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+
+/* ---------------- loading / empty / error states ---------------- */
+
+.skel { background: var(--surface-2); border-radius: 2px; animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+.skel-stack { display: grid; gap: 0.75rem; }
+.skel-line { height: 1rem; }
+.skel-line--sm { height: 0.75rem; width: 45%; }
+.skel-line--lg { height: 2.5rem; width: 60%; }
+.skel-block { height: 9rem; }
+
+.state-empty { color: var(--faint); padding-block: 1.5rem; }
+
+.state-error {
+    border: 1px solid rgba(224, 173, 99, 0.35);
+    border-radius: 2px;
+    background: rgba(224, 173, 99, 0.06);
+    color: var(--amber);
+    padding: 0.85rem 1.1rem;
+    font-size: 0.93rem;
+}
+
+.fade { animation: fade 0.4s ease-out both; }
+@keyframes fade {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   Page transition curtain
+
+   Five columns sweep up over the outgoing page, then peel off the
+   top of the incoming one. The <html> classes are set by core.js;
+   with JS off the curtain never appears at all.
+   ============================================================ */
+
+.curtain {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+/* One solid sheet, fully opaque at every pixel. An earlier version
+   faded its leading edge to transparent, which let the fixed nav show
+   straight through the "cover" - the whole point of a curtain is that
+   nothing behind it survives. */
+.curtain__sheet {
+    position: absolute;
+    inset: 0;
+    /* Two layers: a violet wash over a solid base. The base is what
+       makes it opaque, and because both are backgrounds they are
+       clipped by border-radius, so the wash follows the curved edge
+       instead of cutting a straight line across it. */
+    background:
+        linear-gradient(to bottom, rgba(167, 139, 250, 0.16), rgba(167, 139, 250, 0) 200px),
+        #0d0c13;
+    transform: translateY(100%);
+    will-change: transform, border-radius;
+}
+
+.curtain__label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.1rem;
+    opacity: 0;
+    padding-inline: var(--pad);
+    text-align: center;
+}
+
+/* The name is clipped by its own mask and rises into it, rather than
+   fading in on the spot. */
+.curtain__mask { display: block; overflow: hidden; padding-bottom: 0.08em; }
+
+.curtain__name {
+    display: block;
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 9vw, 4.5rem);
+    line-height: 1.05;
+    color: #fff;
+    transform: translateY(115%);
+    will-change: transform;
+}
+
+.curtain__bar { width: clamp(120px, 26vw, 260px); height: 1px; background: rgba(255, 255, 255, 0.12); position: relative; overflow: hidden; }
+.curtain__bar::after { content: ""; position: absolute; inset: 0 auto 0 0; width: 0; background: var(--accent); }
+
+/* -- leaving -- */
+.nav-out .curtain { visibility: visible; }
+/* The sheet arrives with a curved leading edge that flattens as it
+   lands, so the cover reads as one moving surface. It is fully opaque
+   from the first frame: by the time the rise ends nothing of the old
+   page is left showing. CURTAIN_OUT_MS in core.js waits out the 0.5s
+   rise before navigating. */
+.nav-out .curtain__sheet { animation: sheet-up 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards; }
+.nav-out .curtain__label { animation: label-in 0.25s ease-out 0.3s forwards; }
+.nav-out .curtain__name { animation: name-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards; }
+.nav-out .curtain__bar::after { animation: bar-draw 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.42s forwards; }
+
+@keyframes sheet-up {
+    from { transform: translateY(100%); border-radius: 50% 50% 0 0 / 14% 14% 0 0; }
+    to   { transform: translateY(0);    border-radius: 0; }
+}
+@keyframes label-in { to { opacity: 1; } }
+@keyframes name-up  { to { transform: translateY(0); } }
+@keyframes bar-draw { to { width: 100%; } }
+
+/* -- arriving -- */
+.nav-in .curtain { visibility: visible; }
+
+/* Starts already covering, then peels off the top edge. */
+.nav-in .curtain__sheet {
+    transform: translateY(0);
+    animation: sheet-off 0.6s cubic-bezier(0.76, 0, 0.24, 1) 0.12s forwards;
+}
+.nav-in .curtain__label { opacity: 1; animation: label-out 0.3s ease-in 0.22s forwards; }
+.nav-in .curtain__name {
+    transform: translateY(0);
+    animation: name-off 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+.nav-in .curtain__bar { opacity: 0; }
+
+@keyframes sheet-off {
+    from { transform: translateY(0);     border-radius: 0; }
+    to   { transform: translateY(-100%); border-radius: 0 0 50% 50% / 0 0 14% 14%; }
+}
+@keyframes name-off { to { transform: translateY(-115%); } }
+@keyframes label-out { to { opacity: 0; } }
+
+/* The incoming page lifts in behind the curtain. */
+.nav-in .page { animation: page-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both; }
+@keyframes page-in {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* ---------------- reduced motion ---------------- */
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    /* Drop the curtain entirely rather than flashing it. */
+    .curtain { display: none !important; }
+    .nav-in .page { animation: none !important; opacity: 1 !important; transform: none !important; }
+}

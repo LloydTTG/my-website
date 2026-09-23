@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact</title>
+<meta name="description" content="How to reach me.">
+<meta name="theme-color" content="#0a0a0c">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+
+<script>document.documentElement.classList.add('nav-in');</script>
+</head>
+
+<body>
+
+<header class="nav">
+    <div class="nav__inner">
+        <a class="nav__mark" href="index.html" data-page="Professional"><span class="nav__mark-full" data-identity>Randy Ngui</span><span class="nav__mark-short" data-identity-short>Randy</span><span class="nav__dot">.</span></a>
+        <nav class="nav__links" aria-label="Primary">
+            <a class="nav__link" href="index.html"    data-page="Professional">Professional</a>
+            <a class="nav__link" href="personal.html" data-page="Personal">Personal</a>
+            <a class="nav__link" href="contact.html"  data-page="Contact" aria-current="page">Contact</a>
+        </nav>
+    </div>
+</header>
+
+<div class="curtain" aria-hidden="true">
+    <div class="curtain__sheet"></div>
+    <div class="curtain__label">
+        <span class="curtain__mask"><span class="curtain__name" id="curtain-name">Contact</span></span>
+        <span class="curtain__bar"></span>
+    </div>
+</div>
+
+<div class="page">
+<main>
+
+    <section class="wrap hero">
+        <p class="hero__eyebrow">
+            <span class="dot" id="contact-dot"></span>
+            <span class="label label--bright" id="contact-status">Open to work</span>
+        </p>
+        <h1 class="display hero__name">Say<br>something</h1>
+        <p class="lede">Internships, project collaborations, or a question about something on this site. Email is the fastest way through.</p>
+    </section>
+
+    <section class="wrap section--tight">
+        <p class="label subsection__label">Email</p>
+        <a class="mailto" id="contact-email" href="#">—</a>
+    </section>
+
+    <section class="wrap section" id="elsewhere">
+        <div class="section-head">
+            <div class="section-head__top"><p class="label label--accent">Elsewhere</p></div>
+        </div>
+
+        <div id="sec-channels">
+            <div data-skeleton class="skel-stack">
+                <div class="skel skel-line"></div>
+                <div class="skel skel-line"></div>
+                <div class="skel skel-line"></div>
+            </div>
+            <div data-content hidden class="channels" id="channel-list"></div>
+            <div data-empty hidden class="state-empty">No other channels listed.</div>
+            <div data-error hidden class="state-error"></div>
+        </div>
+    </section>
+
+    <section class="wrap outro">
+        <hr class="rule outro__rule">
+        <div class="grid-split">
+            <div>
+                <h2 class="h3 outro__sub">Response time</h2>
+                <p class="prose">Usually within a day or two. If it is urgent, say so in the subject line and I will see it sooner.</p>
+            </div>
+            <div>
+                <h2 class="h3 outro__sub">Based in</h2>
+                <p class="prose" id="contact-location">—</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer class="foot">
+    <div class="wrap foot__inner">
+        <p class="label">&copy; <span data-year></span> <span data-identity>Randy Ngui</span></p>
+        <div class="foot__links">
+            <a class="nav__link" href="index.html"    data-page="Professional">Professional</a>
+            <a class="nav__link" href="personal.html" data-page="Personal">Personal</a>
+            <a class="nav__link" href="contact.html"  data-page="Contact">Contact</a>
+        </div>
+    </div>
+</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/core.js"></script>
+<script src="assets/contact.js"></script>
+</body>
+</html>

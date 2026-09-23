@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Personal</title>
+<meta name="description" content="Training numbers, photographs and a public journal.">
+<meta name="theme-color" content="#0a0a0c">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+
+<script>document.documentElement.classList.add('nav-in');</script>
+</head>
+
+<body>
+
+<header class="nav">
+    <div class="nav__inner">
+        <a class="nav__mark" href="index.html" data-page="Professional"><span class="nav__mark-full" data-identity>Randy Ngui</span><span class="nav__mark-short" data-identity-short>Randy</span><span class="nav__dot">.</span></a>
+        <nav class="nav__links" aria-label="Primary">
+            <a class="nav__link" href="index.html"    data-page="Professional">Professional</a>
+            <a class="nav__link" href="personal.html" data-page="Personal" aria-current="page">Personal</a>
+            <a class="nav__link" href="contact.html"  data-page="Contact">Contact</a>
+        </nav>
+    </div>
+</header>
+
+<div class="curtain" aria-hidden="true">
+    <div class="curtain__sheet"></div>
+    <div class="curtain__label">
+        <span class="curtain__mask"><span class="curtain__name" id="curtain-name">Personal</span></span>
+        <span class="curtain__bar"></span>
+    </div>
+</div>
+
+<div class="page">
+<main>
+
+    <!-- ============================ HERO ============================ -->
+    <section class="wrap hero">
+        <p class="hero__eyebrow"><span class="label label--accent">Off the clock</span></p>
+        <h1 class="display hero__name">The rest<br>of it</h1>
+        <p class="lede" id="personal-lede">Weight on a bar, photographs worth keeping, and whatever I felt like writing down.</p>
+    </section>
+
+    <!-- =========================== TRAINING =========================== -->
+    <section class="wrap section" id="training">
+        <div class="section-head">
+            <div class="section-head__top"><p class="label label--accent" data-section-label="Training">01 / Training</p></div>
+            <h2 class="h2">Bodyweight</h2>
+            <p class="section-head__note">A seven-day rolling average rather than daily readings, because water weight is noise and the trend is the only part that matters.</p>
+        </div>
+
+        <div id="sec-weight">
+            <div data-skeleton class="skel-stack">
+                <div class="skel skel-line skel-line--lg"></div>
+                <div class="skel skel-block" style="height:14rem"></div>
+            </div>
+
+            <div data-content hidden>
+                <div class="readout">
+                    <span class="readout__value num" id="weight-now"></span>
+                    <span class="readout__aside" id="weight-sub"></span>
+                </div>
+                <p class="label num weight-meta" id="weight-meta"></p>
+                <div class="chart">
+                    <canvas id="weight-chart" role="img" aria-label="Seven day rolling average bodyweight"></canvas>
+                </div>
+            </div>
+
+            <div data-empty hidden class="state-empty">No bodyweight readings yet.</div>
+            <div data-error hidden class="state-error"></div>
+        </div>
+
+        <div id="sec-prs" class="subsection">
+            <p class="label subsection__label">Personal Powerlifting Records</p>
+            <div data-skeleton class="skel skel-block" style="height:8rem"></div>
+            <div data-content hidden class="records" id="record-grid"></div>
+            <div data-empty hidden class="state-empty">No lifts recorded yet.</div>
+            <div data-error hidden class="state-error"></div>
+        </div>
+    </section>
+
+    <!-- ============================ SPECS ============================ -->
+    <section class="wrap section" id="specs">
+        <div class="section-head">
+            <div class="section-head__top"><p class="label label--accent" data-section-label="Specs">02 / Specs</p></div>
+            <h2 class="h2">The numbers</h2>
+        </div>
+
+        <div class="grid-split">
+            <p class="prose">Bodyweight is deliberately absent from this list. It is read from the training log instead, so it can never disagree with the chart above.</p>
+
+            <div class="panel" id="sec-vitals">
+                <div data-skeleton class="skel-stack">
+                    <div class="skel skel-line"></div>
+                    <div class="skel skel-line" style="width:70%"></div>
+                    <div class="skel skel-line" style="width:85%"></div>
+                </div>
+                <dl data-content hidden class="specs" id="spec-list"></dl>
+                <div data-empty hidden class="state-empty">No specs recorded yet.</div>
+                <div data-error hidden class="state-error"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================ FRAMES ============================ -->
+    <section class="wrap section" id="frames">
+        <div class="section-head">
+            <div class="section-head__top"><p class="label label--accent" data-section-label="Frames">03 / Frames</p></div>
+            <h2 class="h2">Things I photographed</h2>
+        </div>
+
+        <div id="sec-gallery">
+            <div data-skeleton class="gallery">
+                <div class="skel" style="aspect-ratio:4/3"></div>
+                <div class="skel" style="aspect-ratio:4/3"></div>
+                <div class="skel" style="aspect-ratio:4/3"></div>
+            </div>
+            <div data-content hidden class="gallery" id="gallery-grid"></div>
+            <div data-empty hidden class="state-empty">Nothing here yet.</div>
+            <div data-error hidden class="state-error"></div>
+        </div>
+    </section>
+
+    <!-- ============================ JOURNAL ============================ -->
+    <section class="wrap section" id="journal">
+        <div class="section-head">
+            <div class="section-head__top">
+                <p class="label label--accent" data-section-label="Journal">04 / Journal</p>
+                <p class="label section-head__trail" id="journal-count"></p>
+            </div>
+            <h2 class="h2">Written down</h2>
+            <p class="section-head__note">Published entries only. Most of what I write stays private.</p>
+        </div>
+
+        <div id="sec-journal">
+            <div data-skeleton class="skel-stack">
+                <div class="skel skel-line skel-line--sm"></div>
+                <div class="skel skel-line" style="width:55%"></div>
+                <div class="skel skel-line" style="width:80%"></div>
+            </div>
+            <ol data-content hidden class="journal" id="journal-list"></ol>
+            <div data-empty hidden class="state-empty">Nothing published yet.</div>
+            <div data-error hidden class="state-error"></div>
+        </div>
+    </section>
+
+    <!-- ============================= CTA ============================= -->
+    <section class="wrap outro">
+        <hr class="rule outro__rule">
+        <h2 class="h2 outro__title">Here for the work instead?</h2>
+        <div class="hero__actions">
+            <a class="btn btn--solid" href="index.html" data-page="Professional">
+                Professional <span class="btn__arrow" aria-hidden="true">&rarr;</span>
+            </a>
+            <a class="btn" href="contact.html" data-page="Contact">Get in touch</a>
+        </div>
+    </section>
+
+</main>
+
+<footer class="foot">
+    <div class="wrap foot__inner">
+        <p class="label">&copy; <span data-year></span> <span data-identity>Randy Ngui</span></p>
+        <div class="foot__links">
+            <a class="nav__link" href="index.html"    data-page="Professional">Professional</a>
+            <a class="nav__link" href="personal.html" data-page="Personal">Personal</a>
+            <a class="nav__link" href="contact.html"  data-page="Contact">Contact</a>
+        </div>
+    </div>
+</footer>
+</div>
+
+<!-- ============================ OVERLAY ============================ -->
+<div id="overlay" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+    <article class="overlay__sheet">
+        <button id="overlay-close" class="overlay__close" type="button" aria-label="Close entry">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                <path d="M5 5l10 10M15 5L5 15"/>
+            </svg>
+        </button>
+
+        <figure id="overlay-cover-frame" class="overlay__cover" hidden>
+            <img id="overlay-cover" alt="" loading="lazy" decoding="async">
+        </figure>
+
+        <p class="label label--accent num" id="overlay-date"></p>
+        <h3 class="overlay__title" id="overlay-title"></h3>
+        <div class="tags tags--gap" id="overlay-tags"></div>
+        <div class="overlay__body" id="overlay-body"></div>
+    </article>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="assets/core.js"></script>
+<script src="assets/personal.js"></script>
+</body>
+</html>
